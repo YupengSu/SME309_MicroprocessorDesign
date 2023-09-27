@@ -1,7 +1,3 @@
-`include "Lab1/src/Control.v"
-`include "Lab1/src/Memory.v"
-`include "Lab1/src/Seg_Display.v"
-
 module Top (
     input clk, // input clk (frequency 100 Mhz)
     input rst_n, // input rst
