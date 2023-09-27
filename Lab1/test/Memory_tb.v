@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "Lab1/src/Memory.v"
 
 module Memory_tb;
 

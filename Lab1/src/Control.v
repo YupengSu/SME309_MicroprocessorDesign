@@ -19,22 +19,31 @@ parameter HIGH_SPEED = 3'b100; // 4 word/sec
 //         Button Sampling and Debouncing
 // ===============================================
 
-reg [20:0] key_cnt;
+reg [19:0] key_cnt;
 reg [2:0] key_scan,key_scan_r,key_flag;
 
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-        key_cnt <= 21'd0;
-        key_scan <= 3'b111;
+        key_cnt <= 20'd0;
+        key_scan <= 3'b000;
     end
     else begin
-        if (key_cnt == 21'd1_999_999) begin // 100M/50 - 1 = 1_999_999 (Sampling rate: 20ms = 50Hz)
-            key_cnt <= 21'd0;
+        if (key_cnt == 20'd999_999) begin // 100M/100 - 1 = 999_999 (Sampling rate: 10ms = 100Hz)
+            key_cnt <= 20'd0;
             key_scan <= {btn_p,btn_spdup,btn_spddn};
         end
         else begin
-            key_cnt <= key_cnt + 21'd1;
+            key_cnt <= key_cnt + 20'd1;
         end
+    end
+end
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        key_scan_r <= 3'b000;
+    end
+    else begin
+        key_scan_r <= key_scan;
     end
 end
 
@@ -43,20 +52,11 @@ always @(posedge clk or negedge rst_n) begin
         key_flag <= 3'b000;
     end
     else begin
-        key_flag = (key_scan_r) & (~key_scan);
+        key_flag = (~key_scan_r) & (key_scan);
     end
 end
 
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
-        key_scan_r <= 3'b111;
-    end
-    else begin
-        key_scan_r <= key_scan;
-    end
-end
-
-// ===============================================432343
+// ===============================================
 //           Counter: 400*1000*1000
 // ===============================================
 

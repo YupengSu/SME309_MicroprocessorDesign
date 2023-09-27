@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "Lab1/src/Control.v"
 
 module Control_tb;
     // Inputs

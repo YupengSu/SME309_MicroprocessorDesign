@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "Lab1/src/Seg_Display.v"
 
 module Seg_Display_tb;
 
