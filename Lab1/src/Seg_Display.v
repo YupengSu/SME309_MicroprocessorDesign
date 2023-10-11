@@ -10,23 +10,23 @@ module Seg_Display(
 );
 
 // ===============================================
-//            Counter: 1ms = 100 * 10ns
+//            Counter: 1ms = 100_000 * 10ns
 // ===============================================
-reg [6:0] cnt;
+reg [16:0] cnt;
 reg switch_flag,switch_flag_r;
 
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-        cnt <= 7'd0;
+        cnt <= 17'd0;
         switch_flag <= 0;
     end
     else begin
-        if (cnt == 7'd99) begin
-            cnt <= 7'd0;
+        if (cnt == 17'd99_999) begin
+            cnt <= 17'd0;
             switch_flag <= ~switch_flag;
         end
         else begin
-            cnt <= cnt + 7'd1;
+            cnt <= cnt + 17'd1;
         end
     end
 end
