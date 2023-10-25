@@ -91,12 +91,31 @@ module ARM(
     );
 
     // ================================================
+    //                     Shifter
+    // ================================================
+    wire [1:0] Sh;
+    wire [4:0] Shamt5;
+    wire [31:0] ShIn;
+    wire [31:0] ShOut;
+
+    assign Sh = Instr[6:5];
+    assign Shamt5 = Instr[11:7];
+    assign ShIn = RD2;
+
+    Shifter Shifter1(
+        .Sh(Sh),
+        .Shamt5(Shamt5),
+        .ShIn(ShIn),
+        .ShOut(ShOut)
+    );
+
+    // ================================================
     //                       ALU
     // ================================================
     wire [31:0] Src_A, Src_B;
 
     assign Src_A = RD1;
-    assign Src_B = ALUSrc? ExtImm: RD2;
+    assign Src_B = ALUSrc? ExtImm: ShOut;
 
     ALU ALU1 (
         .Src_A(Src_A),

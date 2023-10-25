@@ -14,17 +14,17 @@ module ControlUnit(
     ); 
     
     wire [3:0] Cond;
-    wire PSC, RegW, MemW;
+    wire PSC, RegW, MemW, NoWrite;
     wire [1:0] FlagW;
 
     assign Cond=Instr[31:28];
-
 
     CondLogic CondLogic1(
      CLK,
      PCS,
      RegW,
      MemW,
+     NoWrite,
      FlagW,
      Cond,
      ALUFlags,
@@ -44,6 +44,7 @@ module ControlUnit(
      ImmSrc,
      RegSrc,
      ALUControl,
-     FlagW
+     FlagW,
+     NoWrite
     );
 endmodule

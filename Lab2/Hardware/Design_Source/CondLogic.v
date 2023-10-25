@@ -3,6 +3,7 @@ module CondLogic(
     input PCS,
     input RegW,
     input MemW,
+    input NoWrite,
     input [1:0] FlagW,
     input [3:0] Cond,
     input [3:0] ALUFlags,
@@ -64,7 +65,7 @@ module CondLogic(
     // ================================================
     
     assign PCSrc    = CondEx & PCS ;
-    assign RegWrite = CondEx & RegW;
+    assign RegWrite = CondEx & RegW & ~NoWrite;
     assign MemWrite = CondEx & MemW;
     
 endmodule
