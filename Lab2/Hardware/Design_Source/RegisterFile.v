@@ -13,6 +13,19 @@ module RegisterFile(
     
     // declare RegBank
     reg [31:0] RegBank[0:14] ;
- 
+
+    // Read Operation: Combinational Logical
+    assign RD1 = (A1 != 4'd15)? RegBank[A1]: R15;
+    assign RD2 = (A2 != 4'd15)? RegBank[A2]: R15;
+
+    // Write Operation: Sequential Logical
+    always @(posedge CLK) begin
+        if (WE3) begin
+            RegBank[A3] <= WD3;
+        end
+        else begin
+            RegBank[A3] <= RegBank[A3];
+        end
+    end
     
 endmodule
