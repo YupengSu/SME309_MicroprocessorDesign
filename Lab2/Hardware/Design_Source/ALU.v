@@ -30,7 +30,7 @@ module ALU(
     assign C = Cout & ~ALUControl[1];
     assign V = ~(Src_A[31]^Src_B[31]^ALUControl[0]) & (Src_A[31]^Sum[31]) & ~ALUControl[1]; 
 
-    assign ALUControl = {N,Z,C,V};
+    assign ALUFlags = {N,Z,C,V};
 
 endmodule
 

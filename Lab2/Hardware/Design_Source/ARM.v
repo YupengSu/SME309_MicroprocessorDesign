@@ -15,6 +15,7 @@ module ARM(
     wire PCSrc;
     wire [31:0] Result;
     wire [31:0] PC_Plus_4;
+    wire MemtoReg;
 
     assign Result = MemtoReg? ReadData: ALUResult;
 
@@ -31,7 +32,6 @@ module ARM(
     //                 Control Unit
     // ================================================
     wire [3:0] ALUFlags;
-    wire MemtoReg;
     wire [1:0] ALUControl;
     wire ALUSrc;
     wire [1:0] ImmSrc;
@@ -63,6 +63,7 @@ module ARM(
     assign RA2 = RegSrc[1]? Instr[15:12]: Instr[3:0];
     assign RA3 = Instr[15:12];
     assign R15 = PC_Plus_4 + 32'd4;
+    assign WriteData = RD2;
     
     RegisterFile RF1 (
         .CLK(CLK),

@@ -1,4 +1,4 @@
-module Decoder(
+    module Decoder(
     input [31:0] Instr,
 	
     output PCS,
