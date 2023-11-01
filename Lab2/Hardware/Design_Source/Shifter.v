@@ -10,11 +10,11 @@ module Shifter(
     //           Logical Shift Left
     // ========================================
     wire [31:0] ShOutLSLA, ShOutLSLB, ShOutLSLC, ShOutLSLD, ShOutLSL;
-    assign ShOutLSLA = Shamt5[4]? {ShIn[31:16],{16{1'b0}}}: ShIn;
-    assign ShOutLSLB = Shamt5[3]? {ShOutLSLA[31:8],{8{1'b0}}}: ShOutLSLA;
-    assign ShOutLSLC = Shamt5[2]? {ShOutLSLB[31:4],{4{1'b0}}}: ShOutLSLB;
-    assign ShOutLSLD = Shamt5[1]? {ShOutLSLC[31:2],{2{1'b0}}}: ShOutLSLC;
-    assign ShOutLSL  = Shamt5[0]? {ShOutLSLD[31:1],{1{1'b0}}}: ShOutLSLD;
+    assign ShOutLSLA = Shamt5[4]? {ShIn[15:0],{16{1'b0}}}: ShIn;
+    assign ShOutLSLB = Shamt5[3]? {ShOutLSLA[23:0],{8{1'b0}}}: ShOutLSLA;
+    assign ShOutLSLC = Shamt5[2]? {ShOutLSLB[27:0],{4{1'b0}}}: ShOutLSLB;
+    assign ShOutLSLD = Shamt5[1]? {ShOutLSLC[29:0],{2{1'b0}}}: ShOutLSLC;
+    assign ShOutLSL  = Shamt5[0]? {ShOutLSLD[30:0],{1{1'b0}}}: ShOutLSLD;
 
      // ========================================
     //           Logical Shift Right

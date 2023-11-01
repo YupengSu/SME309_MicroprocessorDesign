@@ -59,7 +59,7 @@
     //   negOffset: Set ALUConrtol & CMP/N: add NoWrite
     // *************************************************
     always @(*) begin
-        casex({ALUOp,Funct[5:0]})
+        casex({ALUOp[1:0],Funct[4:0]})
             // Not DP
             7'b00xxxxx: {ALUControl,FlagW,NoWrite} = 5'b00000; // Pos Offset
             7'b01xxxxx: {ALUControl,FlagW,NoWrite} = 5'b01000; // Neg Offset
