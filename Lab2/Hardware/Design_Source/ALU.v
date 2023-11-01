@@ -16,7 +16,7 @@ module ALU(
     //               Arithmetic Operation
     // ================================================
     assign Src_B_Inv = ALUControl[0]? ~Src_B: Src_B;
-    assign {Cout,Sum} = Src_A + Src_B_Inv;
+    assign {Cout,Sum} = Src_A + Src_B_Inv + ALUControl[0];
 
     assign A_and_B = Src_A & Src_B;
     assign A_or_B  = Src_A | Src_B;
