@@ -19,7 +19,7 @@ module CondLogic(
     //             Flags Register Update
     // ===============================================
     always @(posedge CLK) begin
-        if (FlagW[1]) begin
+        if (FlagW[1] && CondEx) begin
             {N,Z} <= ALUFlags[3:2];
         end
         else begin
@@ -28,7 +28,7 @@ module CondLogic(
     end
 
     always @(posedge CLK) begin
-        if (FlagW[0]) begin
+        if (FlagW[0] && CondEx) begin
             {C,V} <= ALUFlags[1:0];
         end
         else begin
