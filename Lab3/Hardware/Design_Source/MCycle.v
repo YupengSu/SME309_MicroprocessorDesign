@@ -49,54 +49,60 @@ module MCycle
         endcase
     end
 
-    reg [5:0] count = 0 ; // assuming no computation takes more than 64 cycles.
-    reg [2*width-1:0] temp_sum = 0 ;
-    reg [2*width-1:0] shifted_op1 = 0 ;
-    reg [width-1:0] shifted_op2 = 0 ;
+    reg [5:0] count = 0; // assuming no computation takes more than 64 cycles.
+    reg [2*width-1:0] temp_sum = 0;
 
     // Multi-cycle Multiplier & divider
     always@(posedge CLK or posedge RESET) begin: COMPUTING_PROCESS // process which does the actual computation
         if(RESET) begin
             count <= 0 ;
-            temp_sum <= 0 ;
-            shifted_op1 <= { {width{1'b0}}, Operand1} ;
-            shifted_op2 <= Operand2;
+            temp_sum <= {{width{1'b0}}, Operand1};
             Done <= 0;
         end
         // state: IDLE
         else if(state == IDLE) begin
             if(n_state == COMPUTING) begin
-                count <= 0 ;
-                temp_sum <= 0 ;
-                shifted_op1 <= { {width{1'b0}}, Operand1 } ;
-                shifted_op2 <= Operand2;
+                count <= 0;
+                temp_sum <= {{width{1'b0}}, Operand1};
                 Done <= 0;
             end
             // else IDLE->IDLE: registers unchanged
         end
         // state: COMPUTING
         else if(state == COMPUTING) begin
-            if( ~MCycleOp ) begin // Multiply operation
-                // The intial version of multiplier template, modify it to the improved one
-                if(count == width-1) begin // last cycle
-                    Done <= 1'b1 ;
+            if(~MCycleOp) begin // Multiply operation
+                if(count == width-1) begin
+                    Done <= 1'b1;
                     count <= 0;
                 end
                 else begin
                     Done <= 1'b0;
                     count <= count + 1;
                 end
-                if(shifted_op2[0])
-                    temp_sum <= shifted_op1 + temp_sum;
+                if(temp_sum[0])
+                    temp_sum <= temp_sum + {Operand2, {width{1'b0}}};
                     // else temp_sum unchanged
-                shifted_op1 <= {shifted_op1[2*width-2 : 0], 1'b0} ;
-                shifted_op2 <= {1'b0, shifted_op2[width-1 : 1]} ;
+                temp_sum <= temp_sum >> 1;
             end
             // Multiplier end
             else begin // Divide operation
-                //
-                // Fit with your code to design divider, remember to share the hardware resource with the improved multiplier
-                //
+                 if(count == width-1) begin
+                    Done <= 1'b1;
+                    count <= 0;
+                end
+                else begin
+                    Done <= 1'b0;
+                    count <= count + 1;
+                end
+                temp_sum <= temp_sum << 1;
+                temp_sum <= temp_sum - {Operand2, {width{1'b0}}};
+                if (temp_sum[2*width-1]) begin
+                    temp_sum[0] <= 1'b1;
+                end
+                else begin
+                    temp_sum <= temp_sum + {Operand2, {width{1'b0}}};
+                    temp_sum[0] <= 1'b0;
+                end
             end
         end
         // else COMPUTING->IDLE: registers unchanged
