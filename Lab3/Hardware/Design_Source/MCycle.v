@@ -60,19 +60,17 @@ module MCycle
             Done <= 0;
         end
         // state: IDLE
-        else if(state == IDLE) begin
-            if(n_state == COMPUTING) begin
-                count <= 0;
-                Done <= 0;
-                if(~MCycleOp) 
-                    temp_sum <= {Operand1, {width{1'b0}}};
-                else
-                    temp_sum <= ({Operand1, {width{1'b0}}} << 1) - {Operand2, {width{1'b0}}};
-            end
+        else if(state == IDLE && n_state == COMPUTING) begin
+            count <= 0;
+            Done <= 0;
+            if(~MCycleOp) 
+                temp_sum <= {{width{1'b0}},Operand1};
+            else
+                temp_sum <= ({{width{1'b0}},Operand1} << 1) - {Operand2,{width{1'b0}}};        
             // else IDLE->IDLE: registers unchanged
         end
         // state: COMPUTING
-        else if(state == COMPUTING) begin
+        else if(n_state == COMPUTING) begin
             if(~MCycleOp) begin // Multiply operation
                 if(count == width-1) begin
                     Done <= 1'b1;
@@ -83,7 +81,7 @@ module MCycle
                     count <= count + 1;
                 end
                 if(temp_sum[0])
-                    temp_sum <= {temp_sum + {Operand2, {width{1'b0}}}} >> 1;
+                    temp_sum <= (temp_sum + {Operand2, {width{1'b0}}}) >> 1;
                 else
                     temp_sum <= temp_sum >> 1;
             end
