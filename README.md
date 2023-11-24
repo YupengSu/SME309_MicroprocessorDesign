@@ -158,3 +158,24 @@ module Wrapper_tb;
     always #5 CLK = ~CLK;
 endmodule
 ```
+
+## Lab3_Report
+
+### Module_MyCycle
+
+#### Testbench & Simulation
+
+![image-20231124155205735](./assets/image-20231124155205735.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
