@@ -6,24 +6,27 @@ module ARM(
 
     output MemWrite,
     output [31:0] PC,
-    output [31:0] ALUResult,
+    output [31:0] OpResult,
     output [31:0] WriteData
 ); 
     // ================================================
     //                 Program Counter
     // ================================================
     wire PCSrc;
-    wire [31:0] Result;
+    wire [31:0] Result, ALUResult, MCycleResult;
     wire [31:0] PC_Plus_4;
-    wire MemtoReg;
+    wire MemtoReg, M_Write;
+    wire M_Start, M_Busy;
 
-    assign Result = MemtoReg? ReadData: ALUResult;
+    assign OpResult = M_Write? MCycleResult: ALUResult;
+    assign Result   = MemtoReg? ReadData: OpResult;
 
     ProgramCounter PC1 (
         .CLK(CLK),
         .Reset(Reset),
         .PCSrc(PCSrc),
         .Result(Result),
+        .M_Busy(M_Busy),
         .PC(PC),
         .PC_Plus_4(PC_Plus_4)
     );
@@ -33,10 +36,11 @@ module ARM(
     // ================================================
     wire [3:0] ALUFlags;
     wire [1:0] ALUControl;
+    wire MCycleOp;
     wire ALUSrc;
     wire [1:0] ImmSrc;
     wire RegWrite;
-    wire [1:0] RegSrc;
+    wire [2:0] RegSrc;
 
     ControlUnit ControlUnit1 (
         .Instr(Instr),
@@ -49,7 +53,10 @@ module ARM(
         .RegWrite(RegWrite),
         .RegSrc(RegSrc),
         .ALUControl(ALUControl),
-        .PCSrc(PCSrc)
+        .PCSrc(PCSrc),
+        .M_Start(M_Start),
+        .MCycleOp(MCycleOp),
+        .M_Write(M_Write)
     );
 
     // ================================================
@@ -59,9 +66,10 @@ module ARM(
     wire [31:0] R15;
     wire [31:0] RD1, RD2;
 
-    assign RA1 = RegSrc[0]? 4'd15: Instr[19:16];
+    //MC04. Add Datapath
+    assign RA1 = RegSrc[2]? Instr[11:8]: (RegSrc[0]? 4'd15: Instr[19:16]);
     assign RA2 = RegSrc[1]? Instr[15:12]: Instr[3:0];
-    assign RA3 = Instr[15:12];
+    assign RA3 = RegSrc[2]? Instr[19:16]: Instr[15:12];
     assign R15 = PC_Plus_4 + 32'd4;
     assign WriteData = RD2;
     
@@ -123,6 +131,20 @@ module ARM(
         .ALUControl(ALUControl),
         .ALUResult(ALUResult),
         .ALUFlags(ALUFlags)
+    );
+
+    // ================================================
+    //                    MCycle
+    // ================================================
+    MCycle MCycle1 (
+        .CLK(CLK),
+        .RESET(Reset),
+        .Start(M_Start),
+        .MCycleOp(MCycleOp),
+        .Operand1(RD1),
+        .Operand2(RD2),
+        .Result(MCycleResult),
+        .Busy(M_Busy)
     );
 
 endmodule

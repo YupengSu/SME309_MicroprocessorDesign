@@ -8,43 +8,53 @@ module ControlUnit(
     output ALUSrc,
     output [1:0] ImmSrc,
     output RegWrite,
-    output [1:0] RegSrc,
+    output [2:0] RegSrc,
     output [1:0] ALUControl,	
-    output PCSrc
+    output PCSrc,
+    output M_Start,
+    output MCycleOp,
+    output M_Write
     ); 
     
     wire [3:0] Cond;
     wire PSC, RegW, MemW, NoWrite;
     wire [1:0] FlagW;
+    wire M_W;
 
     assign Cond=Instr[31:28];
 
     CondLogic CondLogic1(
-     CLK,
-     PCS,
-     RegW,
-     MemW,
-     NoWrite,
-     FlagW,
-     Cond,
-     ALUFlags,
+        CLK,
+        PCS,
+        RegW,
+        MemW,
+        NoWrite,
+        FlagW,
+        Cond,
+        ALUFlags,
+        M_W,
 
-     PCSrc,
-     RegWrite,
-     MemWrite
+        PCSrc,
+        RegWrite,
+        MemWrite,
+        M_Write
     );
 
     Decoder Decoder1(
-     Instr,
-     PCS,
-     RegW,
-     MemW,
-     MemtoReg,
-     ALUSrc,
-     ImmSrc,
-     RegSrc,
-     ALUControl,
-     FlagW,
-     NoWrite
+        Instr,
+
+        PCS,
+        RegW,
+        MemW,
+        MemtoReg,
+        ALUSrc,
+        ImmSrc,
+        RegSrc,
+        ALUControl,
+        FlagW,
+        NoWrite,
+        M_Start,
+        MCycleOp,
+        M_W
     );
 endmodule

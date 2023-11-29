@@ -59,13 +59,14 @@ module MCycle
             count <= 0 ;
             temp_sum <= 0;
             Done <= 0;
+            sign <= 0;
         end
         // state: IDLE
         else if(state == IDLE && n_state == COMPUTING) begin
             count <= 0;
             Done <= 0;
             if(~MCycleOp) 
-                temp_sum <= {{width{1'b0}},Operand1};
+                {sign,temp_sum} <= {1'b0,{width{1'b0}},Operand1};
             else
                 {sign,temp_sum} <= ({1'b0,{width{1'b0}},Operand1} << 1) - {1'b0,Operand2,{width{1'b0}}};        
             // else IDLE->IDLE: registers unchanged
