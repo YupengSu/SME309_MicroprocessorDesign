@@ -44,21 +44,21 @@ module Decoder(
             // DP reg
             7'b00_00_0xx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_0_xx_1_000_11_00; 
             // DP imm
-            7'b00_00_1xx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_1_00_1_x00_11_00;
+            7'b00_00_1xx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_1_00_1_0x0_11_00;
             // STR posImm
-            7'b01_00_x10: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_x_1_1_01_0_100_00_00;
+            7'b01_00_x10: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_x_1_1_01_0_010_00_00;
             // STR negImm
-            7'b01_00_x00: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_x_1_1_01_0_100_01_00;
+            7'b01_00_x00: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_x_1_1_01_0_010_01_00;
             // LDR posImm
-            7'b01_00_x11: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_1_0_1_01_1_x00_00_00;
+            7'b01_00_x11: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_1_0_1_01_1_0x0_00_00;
             // LDR negImm
-            7'b01_00_x01: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_1_0_1_01_1_x00_01_00;
+            7'b01_00_x01: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_1_0_1_01_1_0x0_01_00;
             // Branch
-            7'b10_00_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b1_0_0_1_10_0_x10_00_00;
+            7'b10_00_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b1_0_0_1_10_0_0x1_00_00;
             // ExInstr MUL
-            7'b00_01_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_x_xx_1_x01_00_01;
+            7'b00_01_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_x_xx_1_10x_00_01;
             // ExInstr DIV
-            7'b01_10_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_x_xx_1_x01_00_10;
+            7'b01_10_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_x_xx_1_10x_00_10;
 
             default:      {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_0_00_0_000_00_00;
         endcase
