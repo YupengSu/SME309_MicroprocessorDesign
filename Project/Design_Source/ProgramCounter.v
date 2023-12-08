@@ -3,7 +3,7 @@ module ProgramCounter(
     input Reset,
     input PCSrc,
     input [31:0] Result,
-    input M_Busy,
+    input Stall,
     
     output [31:0] PC,
     output [31:0] PC_Plus_4
@@ -17,7 +17,7 @@ module ProgramCounter(
             current_PC <= 32'b0;
         end
         // MC01.MCycle Busy, PC unchanged
-        else if (!M_Busy) begin
+        else if (!Stall) begin
             current_PC <= next_PC;
         end
         else begin

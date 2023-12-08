@@ -13,9 +13,8 @@ module ARM(
     //              BEGIN: SIGNAL DECLARATIONS
 
     // Fetch Block:
-    wire PCF;
-    wire [31:0] PC_Plus_4F;
-    wire InstrF;
+    wire [31:0] PCF, PC_Plus_4F;
+    wire [31:0] InstrF;
 
     wire StallF;
 
@@ -23,12 +22,29 @@ module ARM(
     wire [31:0] InstrD;
 
     wire PCSD;
+    wire RegWD;
+    wire MemWD;
+    wire [1:0] FlagWD;
+    wire [1:0] ALUControlD;
     wire MemtoRegD;
+    wire ALUSrcD;
+    wire [1:0] ImmSrcD;
+    wire [2:0] RegSrcD;
+    wire NoWriteD;
+    wire M_StartD;
+    wire MCycleOpD;
+    wire M_WD;
+
+    wire StallD, FlushD;
 
     // Execute Block:
     wire PCSE;
     wire PCSrcE;
     wire MemtoRegE;
+    wire M_StartE;
+    wire M_WE;
+       
+    wire M_writeE;
 
     wire ALUResultE;
     wire MCycleResultE;
@@ -42,7 +58,7 @@ module ARM(
 
     // Write Back Block:
     wire MemtoRegW;
-    
+
     wire OpResultW;
     wire ResultW;
 
@@ -53,48 +69,55 @@ module ARM(
     // ======================================================
     //         Fetch: Instruction Fetch and Update PC
     // ======================================================
-    wire MemtoReg, M_Write;
-    wire M_Start, M_Busy;
 
     assign OpResult = M_Write? MCycleResult: ALUResult;
     assign Result   = MemtoReg? ReadData: OpResult;
-
+    
     ProgramCounter PC1 (
         .CLK(CLK),
         .Reset(Reset),
         .PCSrc(PCSrcE),
-        .Result(Result),
-        .M_Busy(M_Busy),
-        .PC(PC),
-        .PC_Plus_4(PC_Plus_4)
+        .Result(ResultW),
+        .Stall(StallF),
+        .PC(PCF),
+        .PC_Plus_4(PC_Plus_4F)
     );
 
-    // ================================================
-    //                 Control Unit
-    // ================================================
-    wire [3:0] ALUFlags;
-    wire [1:0] ALUControl;
-    wire MCycleOp;
-    wire ALUSrc;
-    wire [1:0] ImmSrc;
-    wire RegWrite;
-    wire [2:0] RegSrc;
+    assign PC = PCF;
+    assign InstrF = Instr;
 
-    ControlUnit ControlUnit1 (
-        .Instr(Instr),
-        .ALUFlags(ALUFlags),
-        .CLK(CLK),
-        .MemtoReg(MemtoReg),
-        .MemWrite(MemWrite),
-        .ALUSrc(ALUSrc),
-        .ImmSrc(ImmSrc),
-        .RegWrite(RegWrite),
-        .RegSrc(RegSrc),
-        .ALUControl(ALUControl),
-        .PCSrc(PCSrc),
-        .M_Start(M_Start),
-        .MCycleOp(MCycleOp),
-        .M_Write(M_Write)
+    always @(posedge CLK) begin
+        if (FlushD) begin
+            InstrD <= 32'b0;
+        end
+        else if (StallD) begin
+            InstrD <= InstrD;
+        end
+        else begin
+            InstrD <= InstrF;
+        end
+    end
+
+    // ======================================================
+    //     Decode: Registers Fetch and Instruction Decode
+    // ======================================================
+    
+    Decoder Decoder1(
+        .Instr(InstrD),
+
+        .PCS(PCSD),
+        .RegW(RegWD),
+        .MemW(MemWD),
+        .MemtoReg(MemtoRegD),
+        .ALUSrc(ALUSrcD),
+        .ImmSrc(ImmSrcD),
+        .RegSrc(RegSrcD),
+        .ALUControl(ALUControlD),
+        .FlagW(FlagWD),
+        .NoWrite(NoWriteD),
+        .M_Start(M_StartD),
+        .MCycleOp(MCycleOpD),
+        .M_W(M_WD)
     );
 
     // ================================================
