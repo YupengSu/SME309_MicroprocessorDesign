@@ -9,12 +9,50 @@ module ARM(
     output [31:0] OpResult,
     output [31:0] WriteData
 ); 
-    // ================================================
-    //                 Program Counter
-    // ================================================
-    wire PCSrc;
-    wire [31:0] Result, ALUResult, MCycleResult;
-    wire [31:0] PC_Plus_4;
+    // ******************************************************
+    //              BEGIN: SIGNAL DECLARATIONS
+
+    // Fetch Block:
+    wire PCF;
+    wire [31:0] PC_Plus_4F;
+    wire InstrF;
+
+    wire StallF;
+
+    // Decode Block:
+    wire [31:0] InstrD;
+
+    wire PCSD;
+    wire MemtoRegD;
+
+    // Execute Block:
+    wire PCSE;
+    wire PCSrcE;
+    wire MemtoRegE;
+
+    wire ALUResultE;
+    wire MCycleResultE;
+    wire OpResultE;
+
+    // Memory Block:
+    wire MemtoRegM;
+
+    wire OpResultM;
+
+
+    // Write Back Block:
+    wire MemtoRegW;
+    
+    wire OpResultW;
+    wire ResultW;
+
+    //               END: SIGNAL DECLARATIONS
+    // ******************************************************
+    
+
+    // ======================================================
+    //         Fetch: Instruction Fetch and Update PC
+    // ======================================================
     wire MemtoReg, M_Write;
     wire M_Start, M_Busy;
 
@@ -24,7 +62,7 @@ module ARM(
     ProgramCounter PC1 (
         .CLK(CLK),
         .Reset(Reset),
-        .PCSrc(PCSrc),
+        .PCSrc(PCSrcE),
         .Result(Result),
         .M_Busy(M_Busy),
         .PC(PC),
