@@ -24,7 +24,7 @@
 
 In this project, you will implement a five-stage pipeline processor that Prof. Lin has shown in the lecture based on the single-cycle processor you’ve implemented in Lab2. The structure is shown below. Take care of data hazards (data forwarding, stall, flush) and control hazards (early BTA, flush).
 
-![image-20231208131455082](./assets/image-20231208131455082.png)
+![image-20231208163836001](./assets/image-20231208163836001.png)
 
 #### Implement Workflow:
 
