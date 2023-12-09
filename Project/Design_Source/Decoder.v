@@ -56,9 +56,9 @@ module Decoder(
             // Branch
             7'b10_00_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b1_0_0_1_10_0_0x1_00_00;
             // ExInstr MUL
-            7'b00_01_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_x_xx_1_10x_00_01;
+            7'b00_01_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_0_xx_1_10x_00_01;
             // ExInstr DIV
-            7'b01_10_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_x_xx_1_10x_00_10;
+            7'b01_10_xxx: {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_0_xx_1_10x_00_10;
 
             default:      {Branch,MemtoReg,MemW,ALUSrc,ImmSrc,RegW,RegSrc,ALUOp,MCOp} = 14'b0_0_0_0_00_0_000_00_00;
         endcase
