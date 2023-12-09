@@ -24,4 +24,5 @@ module HazardUnit(
     output FlushM,
     output ForwardM
     );
+    // TODO: Your code here
 endmodule
