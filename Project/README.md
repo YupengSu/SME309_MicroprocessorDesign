@@ -26,7 +26,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 ![image-20231208163836001](./assets/image-20231208163836001.png)
 
-#### Implement Workflow:W
+#### Implement Workflow:
 
 **// TODO: Yupeng Su **
 
