@@ -49,6 +49,8 @@ module ARM(
     wire StallE, FlushE;
     wire [1:0] ForwardAE, ForwardBE;
 
+    reg [31:0] InstrE;
+
     reg PCSE;
     reg RegWE;
     reg MemWE;
@@ -89,6 +91,8 @@ module ARM(
     wire FlushM;
     wire ForwardM;
 
+    reg [31:0] InstrM;
+
     reg RegWriteM;
     reg MemWriteM;
     reg MemtoRegM;
@@ -100,6 +104,8 @@ module ARM(
     wire [31:0] ReadDataM;
 
     // Write Back Block:
+    reg [31:0] InstrW;
+
     reg RegWriteW;
     reg MemtoRegW;
 
@@ -201,6 +207,8 @@ module ARM(
     // PIPLINE 3
     always @(posedge CLK) begin
         if (FlushE) begin
+            InstrE <= 0;
+
             PCSE <= 0;
             RegWE <= 0;
             MemWE <= 0;
@@ -224,6 +232,8 @@ module ARM(
             ExtImmE <= 0;
         end
         else if (StallE) begin
+            InstrE <= InstrE;
+
             PCSE <= PCSE;
             RegWE <= RegWE;
             MemWE <= MemWE;
@@ -247,6 +257,8 @@ module ARM(
             ExtImmE <= ExtImmE;
         end
         else begin
+            InstrE <= InstrD;
+
             PCSE <= PCSD;
             RegWE <= RegWD;
             MemWE <= MemWD;
@@ -333,6 +345,8 @@ module ARM(
     // PIPLINE 4
     always @(posedge CLK) begin
         if (FlushM) begin
+            InstrM <= 0;
+
             RegWriteM <= 0;
             MemWriteM <= 0;
             MemtoRegM <= 0;
@@ -342,6 +356,8 @@ module ARM(
             WA3M <= 0;
         end
         else begin
+            InstrM <= InstrE;
+
             RegWriteM <= RegWriteE;
             MemWriteM <= MemWriteE;
             MemtoRegM <= MemtoRegE;
@@ -362,6 +378,8 @@ module ARM(
 
     // PIPLINE 5
     always @(posedge CLK) begin
+        InstrW <= InstrM;
+
         RegWriteW <= RegWriteM;
         MemtoRegW <= MemtoRegM;
         ReadDataW <= ReadDataM;
