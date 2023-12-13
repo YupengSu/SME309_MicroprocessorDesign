@@ -107,7 +107,7 @@ module ARM(
     reg [31:0] OpResultW;
     reg [3:0] WA3W;
 
-    wire ResultW;
+    wire [31:0] ResultW;
 
     //               END: SIGNAL DECLARATIONS
     // ******************************************************
