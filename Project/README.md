@@ -28,15 +28,31 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 **// TODO: Yupeng Su **
 
-1. **ADD Module** `HazardUnit` :
+1. **ADD Module** `HazardUnit`
 
-2. **Change `ARM.v` Structure (Divide to 5 Block)** : 
+   * Forward Signal: 
+
+     `ForwardAE`, `ForwardBE` used to handle data harzard for DP instruction.
+
+     `ForwardM` used to andle data harzard for Men instruction.
+
+   * Stall_Flush Signal: `StallF`, `StallD`, `StallE`, `FlushD`,  `FlushE`, `FlushM`.
+
+     1. Stalling for Load and Use: **Insert NOPs** to wait for load instructions.
+     2. Stalling for Branch: **Replace NOPs** to clear instructions before branch jump.
+     3. Stalling for MCycle: **Insert NOPs** to wait for MultiCycle MUL/DIV.
+
+2. **Change `ARM.v` Structure (Divide to 5 Block)** 
 
 3. **ADD Module `Mcycle` into Pipelined Processor (Keep consistence with Lab3)**
 
-4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
+   The two works are concluded as the figure shown below:
 
    ![image-20231208163836001](./assets/image-20231208163836001.png)
+
+4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
+
+   ![image-20231213173635471](/Users/suyupeng/Documents/GitHub/SME309_MicroprocessorDesign/Project/assets/image-20231213173635471.png)
 
 #### Test & Simulation:
 
