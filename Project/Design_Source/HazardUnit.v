@@ -5,6 +5,7 @@ module HazardUnit(
     input [3:0] RA2E,
     input [3:0] WA3E,
     input MemtoRegE,
+    input RegWriteE,
     input PCSrcE,
     input M_BusyE,
     input [3:0] WA3M,
@@ -12,6 +13,7 @@ module HazardUnit(
     input [3:0] RA2M,
     input MemWriteM,
     input [3:0] WA3W,
+    input MemtoRegW,
     input RegWriteW,
 
     output StallF,

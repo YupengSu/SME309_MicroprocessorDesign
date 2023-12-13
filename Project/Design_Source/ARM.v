@@ -381,6 +381,7 @@ module ARM(
         .RA1E(RA1E),
         .RA2E(RA2E),
         .WA3E(WA3E),
+        .RegWriteE(RegWriteE),
         .MemtoRegE(MemtoRegE),
         .PCSrcE(PCSrcE),
         .M_BusyE(M_BusyE),
@@ -389,6 +390,7 @@ module ARM(
         .RA2M(RA2M),
         .MemWriteM(MemWriteM),
         .WA3W(WA3W),
+        .MemtoRegW(MemtoRegW),
         .RegWriteW(RegWriteW),
 
         .StallF(StallF),
