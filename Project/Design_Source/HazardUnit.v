@@ -25,7 +25,7 @@ module HazardUnit(
     output ForwardM
     );
     
-    /* BEGIN: DATA HAZARD */
+    /* BEGIN: FORWARDING SIGNAL */
 
     // Data forwarding for DP
     wire Match_1E_M, Match_2E_M, Match_1E_W, Match_2E_W;
@@ -60,8 +60,30 @@ module HazardUnit(
     // Data forwarding for Mem
     assign ForwardM = (RA2M == WA3M) & MemWriteM & MemtoRegW & RegWriteM;
 
+    /* END: FORWARDING SIGNAL */
+
+    /* BEGIN: STALL_FLUSH SIGNAL */
+
     // Stalling for Load and Use
     wire Match_12D_E;
-    assign = (RA1D == WA3E) | (RA2D == WA3E); 
+    assign Match_12D_E = (RA1D == WA3E) | (RA2D == WA3E); 
+    wire Idrstall;
+    assign Idrstall = Match_12D_E & MemtoRegE & RegWriteE;
+    // Stalling for Branch
+    wire BranchStall;
+    assign BranchStall = PCSrcE;
+    // Stalling for MCycle
+    wire MCycleStall;
+    assign MCycleStall = M_BusyE;
+
+    assign StallF = Idrstall || MCycleStall;
+    assign StallD = Idrstall || MCycleStall;
+    assign StallE = MCycleStall;
+    assign FlushD = BranchStall;
+    assign FlushE = Idrstall || BranchStall;
+    assign FlushM = MCycleStall;
+
+    /* END: STALL_FLUSH SIGNAL */
+
 
 endmodule
