@@ -8,7 +8,7 @@ initial begin
   DIP = 6'b001100;
   CLK = 0;
   RESET = 0;
-  #10
+  #15
   RESET = 1;
   #10
   RESET = 0;

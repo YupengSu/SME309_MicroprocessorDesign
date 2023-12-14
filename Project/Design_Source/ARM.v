@@ -195,7 +195,7 @@ module ARM(
         .RD2(RD2D)
     );
     
-    assign InstrImmD = Instr[23:0];
+    assign InstrImmD = InstrD[23:0];
 
     Extend Extend1 (
         .ImmSrc(ImmSrcD),
