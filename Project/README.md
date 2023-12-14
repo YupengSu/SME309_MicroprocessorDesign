@@ -26,7 +26,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 #### Implement Workflow:
 
-**// TODO: Yupeng Su **
+**FINISHED: Yupeng Su**
 
 1. **ADD Module** `HazardUnit`
 
@@ -56,6 +56,8 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 #### Test & Simulation:
 
+**TODO: Yupeng Su**
+
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
 
 ### 2. Non-stalling CPU for multi-cycle instructions. 
@@ -80,6 +82,8 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
 #### Implement Workflow:
 
+**TODO: Yupeng Su**
+
 #### Test & Simulation:
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
@@ -96,6 +100,8 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 4. Implement it hardware efficiently, hopefully without additional adders.
 
 #### Implement Workflow:
+
+**TODO: Runsen Zhang, Guanqi Peng**
 
 #### Test & Simulation:
 
@@ -116,6 +122,8 @@ The schematic of a **4-way set associative cache** is shown above. The cache siz
 
 #### Implement Workflow:
 
+**TODO: Xu Si**
+
 #### Test & Simulation:
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
@@ -130,6 +138,8 @@ Add a Floating processing unit (FPU) in your pipelined ARM CPU to support simple
 2. Single Float Multiplication (**FMUL**).
 
 #### Implement Workflow:
+
+**TODO: Guanqi Peng**
 
 Additionally, you should show the design ideas (such as “How to deal with Not a Number(NaN) in float?”) and the details of your design in your report.
 
