@@ -161,11 +161,20 @@ assign Instr = ( (PC >= 32'h00000000) && (PC <= 32'h000001FC) ) ? // To check if
 //----------------------------------------------------------------
 // LED light - display PC value
 //----------------------------------------------------------------
+reg [31:0] LED_reg1, LED_reg2, LED_reg3;
 always@(posedge CLK or posedge RESET) begin
-    if(RESET)
-        LED <= 'b0 ;
-    else 
-        LED <= PC ;
+    if(RESET) begin
+        LED_reg1 <= 32'b0;
+        LED_reg2 <= 32'b0;
+		LED_reg3 <= 32'b0;
+        LED <= 32'b0;
+    end
+    else begin
+		LED_reg1 <= PC;
+		LED_reg2 <= LED_reg1;
+		LED_reg3 <= LED_reg2;
+		LED <= LED_reg3;
+	end
 end
 
 //----------------------------------------------------------------

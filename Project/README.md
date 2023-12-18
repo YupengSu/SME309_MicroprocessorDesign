@@ -26,19 +26,37 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 #### Implement Workflow:
 
-**// TODO: Yupeng Su **
+**FINISHED: Yupeng Su**
 
-1. **ADD Module** `HazardUnit` :
+1. **ADD Module** `HazardUnit`
 
-2. **Change `ARM.v` Structure (Divide to 5 Block)** : 
+   * Forward Signal: 
+
+     `ForwardAE`, `ForwardBE` used to handle data harzard for DP instruction.
+
+     `ForwardM` used to andle data harzard for Men instruction.
+
+   * Stall_Flush Signal: `StallF`, `StallD`, `StallE`, `FlushD`,  `FlushE`, `FlushM`.
+
+     1. Stalling for Load and Use: **Insert NOPs** to wait for load instructions.
+     2. Stalling for Branch: **Replace NOPs** to clear instructions before branch jump.
+     3. Stalling for MCycle: **Insert NOPs** to wait for MultiCycle MUL/DIV.
+
+2. **Change `ARM.v` Structure (Divide to 5 Block)** 
 
 3. **ADD Module `Mcycle` into Pipelined Processor (Keep consistence with Lab3)**
 
-4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
+   The two works are concluded as the figure shown below:
 
    ![image-20231208163836001](./assets/image-20231208163836001.png)
 
+4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
+
+   ![image-20231213173635471](./assets/image-20231213173635471.png)
+
 #### Test & Simulation:
+
+**TODO: Yupeng Su**
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
 
@@ -64,6 +82,8 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
 #### Implement Workflow:
 
+**TODO: Yupeng Su**
+
 #### Test & Simulation:
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
@@ -80,6 +100,8 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 4. Implement it hardware efficiently, hopefully without additional adders.
 
 #### Implement Workflow:
+
+**TODO: Runsen Zhang, Guanqi Peng**
 
 #### Test & Simulation:
 
@@ -100,6 +122,8 @@ The schematic of a **4-way set associative cache** is shown above. The cache siz
 
 #### Implement Workflow:
 
+**TODO: Xu Si**
+
 #### Test & Simulation:
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
@@ -114,6 +138,8 @@ Add a Floating processing unit (FPU) in your pipelined ARM CPU to support simple
 2. Single Float Multiplication (**FMUL**).
 
 #### Implement Workflow:
+
+**TODO: Guanqi Peng**
 
 Additionally, you should show the design ideas (such as “How to deal with Not a Number(NaN) in float?”) and the details of your design in your report.
 

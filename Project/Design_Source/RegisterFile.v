@@ -20,7 +20,7 @@ module RegisterFile(
     assign RD2 = (A2 != 4'd15)? RegBank[A2]: R15;
 
     // Write Operation: Sequential Logical
-    always @(posedge CLK) begin
+    always @(negedge CLK) begin
         if (WE3) begin
             RegBank[A3] <= WD3;
         end

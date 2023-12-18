@@ -49,6 +49,8 @@ module ARM(
     wire StallE, FlushE;
     wire [1:0] ForwardAE, ForwardBE;
 
+    reg [31:0] InstrE;
+
     reg PCSE;
     reg RegWE;
     reg MemWE;
@@ -89,6 +91,8 @@ module ARM(
     wire FlushM;
     wire ForwardM;
 
+    reg [31:0] InstrM;
+
     reg RegWriteM;
     reg MemWriteM;
     reg MemtoRegM;
@@ -100,6 +104,8 @@ module ARM(
     wire [31:0] ReadDataM;
 
     // Write Back Block:
+    reg [31:0] InstrW;
+
     reg RegWriteW;
     reg MemtoRegW;
 
@@ -107,7 +113,7 @@ module ARM(
     reg [31:0] OpResultW;
     reg [3:0] WA3W;
 
-    wire ResultW;
+    wire [31:0] ResultW;
 
     //               END: SIGNAL DECLARATIONS
     // ******************************************************
@@ -189,7 +195,7 @@ module ARM(
         .RD2(RD2D)
     );
     
-    assign InstrImmD = Instr[23:0];
+    assign InstrImmD = InstrD[23:0];
 
     Extend Extend1 (
         .ImmSrc(ImmSrcD),
@@ -201,6 +207,8 @@ module ARM(
     // PIPLINE 3
     always @(posedge CLK) begin
         if (FlushE) begin
+            InstrE <= 0;
+
             PCSE <= 0;
             RegWE <= 0;
             MemWE <= 0;
@@ -224,6 +232,8 @@ module ARM(
             ExtImmE <= 0;
         end
         else if (StallE) begin
+            InstrE <= InstrE;
+
             PCSE <= PCSE;
             RegWE <= RegWE;
             MemWE <= MemWE;
@@ -247,6 +257,8 @@ module ARM(
             ExtImmE <= ExtImmE;
         end
         else begin
+            InstrE <= InstrD;
+
             PCSE <= PCSD;
             RegWE <= RegWD;
             MemWE <= MemWD;
@@ -322,7 +334,7 @@ module ARM(
         .Start(M_StartE),
         .MCycleOp(MCycleOpE),
         .Operand1(SrcAE),
-        .Operand2(SrcBE),
+        .Operand2(WriteDataE),
 
         .Result(MCycleResultE),
         .Busy(M_BusyE)
@@ -333,6 +345,8 @@ module ARM(
     // PIPLINE 4
     always @(posedge CLK) begin
         if (FlushM) begin
+            InstrM <= 0;
+
             RegWriteM <= 0;
             MemWriteM <= 0;
             MemtoRegM <= 0;
@@ -342,6 +356,8 @@ module ARM(
             WA3M <= 0;
         end
         else begin
+            InstrM <= InstrE;
+
             RegWriteM <= RegWriteE;
             MemWriteM <= MemWriteE;
             MemtoRegM <= MemtoRegE;
@@ -362,6 +378,8 @@ module ARM(
 
     // PIPLINE 5
     always @(posedge CLK) begin
+        InstrW <= InstrM;
+
         RegWriteW <= RegWriteM;
         MemtoRegW <= MemtoRegM;
         ReadDataW <= ReadDataM;
@@ -381,6 +399,7 @@ module ARM(
         .RA1E(RA1E),
         .RA2E(RA2E),
         .WA3E(WA3E),
+        .RegWriteE(RegWriteE),
         .MemtoRegE(MemtoRegE),
         .PCSrcE(PCSrcE),
         .M_BusyE(M_BusyE),
@@ -389,6 +408,7 @@ module ARM(
         .RA2M(RA2M),
         .MemWriteM(MemWriteM),
         .WA3W(WA3W),
+        .MemtoRegW(MemtoRegW),
         .RegWriteW(RegWriteW),
 
         .StallF(StallF),
