@@ -334,7 +334,7 @@ module ARM(
         .Start(M_StartE),
         .MCycleOp(MCycleOpE),
         .Operand1(SrcAE),
-        .Operand2(SrcBE),
+        .Operand2(WriteDataE),
 
         .Result(MCycleResultE),
         .Busy(M_BusyE)
