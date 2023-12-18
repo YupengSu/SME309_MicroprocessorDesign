@@ -1,3 +1,4 @@
+/* DECODER: DECODE INSTR */
 module Decoder(
     input [31:0] Instr,
 	

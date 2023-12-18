@@ -1,3 +1,4 @@
+/* ARM CORE: PIPLINE VERSION 01 */
 module ARM(
     input CLK,
     input Reset,

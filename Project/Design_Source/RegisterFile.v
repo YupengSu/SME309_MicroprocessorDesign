@@ -1,3 +1,4 @@
+/* REGISTERFILE: READ/WRITE REGBANK */
 module RegisterFile(
     input CLK,
     input WE3,

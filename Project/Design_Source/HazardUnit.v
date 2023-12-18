@@ -1,3 +1,4 @@
+/* HAZARDUNIT: SOLVE HAZARD */
 module HazardUnit(
     input [3:0] RA1D,
     input [3:0] RA2D,

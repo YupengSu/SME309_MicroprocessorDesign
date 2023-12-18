@@ -1,3 +1,4 @@
+/* CONDLOGIC: COND SIGNAL PROCESS */
 module CondLogic(
     input CLK,
     input PCS,

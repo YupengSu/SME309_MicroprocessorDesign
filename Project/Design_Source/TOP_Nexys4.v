@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>> ******* FOR SYNTHESIS ONLY. DO NOT SIMULATE THIS ******* <<<<<<<<<<<<<<<<<<<<<<<<<<<
 module TOP#(
 	parameter N_LEDs_OUT = 16,        // Number of LEDs displaying Result. LED(15 downto 15-N_LEDs_OUT+1). 16 by default

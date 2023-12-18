@@ -1,3 +1,4 @@
+/* EXTEND: EXTEND INSTRIMM */
 module Extend(
     input [1:0] ImmSrc,
     input [23:0] InstrImm,

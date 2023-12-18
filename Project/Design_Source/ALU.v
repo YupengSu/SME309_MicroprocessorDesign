@@ -1,3 +1,4 @@
+/* ALU MODULE: ADD SUB AND ORR */
 module ALU(
     input [31:0] Src_A,
     input [31:0] Src_B,

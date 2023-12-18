@@ -1,3 +1,4 @@
+/* SHIFTER: LSL LSR ASR ROR */
 module Shifter(
     input [1:0] Sh,
     input [4:0] Shamt5,

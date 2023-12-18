@@ -1,4 +1,4 @@
-// The multiplier template is provided, and you should modify it to the improved one and share the hardware resource to implement division.
+/* MCYCLE: MUL DIV */
 module MCycle
     #(parameter width = 32) // 32-bits for ARMv3
     (

@@ -1,3 +1,4 @@
+/* PROGRAMCOUNETER: UPDATE PC */
 module ProgramCounter(
     input CLK,
     input Reset,
