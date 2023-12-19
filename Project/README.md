@@ -70,22 +70,18 @@ Same Testbench with Lab3:
 
 When a multi-cycle instruction (e.g. MUL instruction) is executed, the CPU should execute the next instructions (instead of stalling the pipeline) if there is no data dependency between the previous instruction. For example, instruction 1 is
 
-$$
-\text{MUL R5, R6, R7}
-$$
+$$ \text{MUL R5, R6, R7} $$
 
 And the next instruction (instruction 2) is
 
-$$
-\text{ADD R1, R2, R3}
-$$
+$$ \text{ADD R1, R2, R3} $$
 
 There is no data dependency between instr2 and instr1. When CPU is executing instr1, it can execute instr2 at the same time. Because Mcycle is an independent module, when it is busy, other parts of CPU can handle other instructions at the same time.
 
 However, if instruction 2 is
-$$
-\text{ADD R1, R5, R3}
-$$
+
+$$ \text{ADD R1, R5, R3} $$
+
 The data dependency between instr2 and instr1 appears, since the CPU need the result of instruction 1 to execute instruction 2, the pipeline may need to stall until the instruction 1 is done.
 
 #### Implement Workflow:
