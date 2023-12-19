@@ -60,18 +60,26 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
 
+Same Testbench with Lab3: 
+
+
+
 ### 2. Non-stalling CPU for multi-cycle instructions. 
 
 #### Requirement: 
 
 When a multi-cycle instruction (e.g. MUL instruction) is executed, the CPU should execute the next instructions (instead of stalling the pipeline) if there is no data dependency between the previous instruction. For example, instruction 1 is
+
 $$
 \text{MUL R5, R6, R7}
 $$
-And the next instruction (instruction 2) is 
+
+And the next instruction (instruction 2) is
+
 $$
 \text{ADD R1, R2, R3}
 $$
+
 There is no data dependency between instr2 and instr1. When CPU is executing instr1, it can execute instr2 at the same time. Because Mcycle is an independent module, when it is busy, other parts of CPU can handle other instructions at the same time.
 
 However, if instruction 2 is
