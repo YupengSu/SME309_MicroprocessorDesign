@@ -52,7 +52,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
 
-   ![image-20231213173635471](./assets/image-20231213173635471.png)
+   <img src="./assets/image-20231213173635471.png" alt="image-20231213173635471" style="zoom: 25%;" />
 
 #### Test & Simulation:
 
