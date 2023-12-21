@@ -3,24 +3,24 @@
 	  
 ; ------- <code memory (ROM mapped to Instruction Memory) begins>
 
-	LDR R1, constant1; R1=5
-	LDR R2, constant2; R2=6
-	LDR R3, addr1; 810
-	LDR R4, addr2; 820
-	LDR R12,addr3; 830
-	ADD R5, R1, R2; R5 = a1 + a2;
+	LDR R1, constant1; R1=5 0
+	LDR R2, constant2; R2=6 1
+	LDR R3, addr1; 810 2
+	LDR R4, addr2; 820 3
+	LDR R12,addr3; 830 4
+	ADD R5, R1, R2; R5 = a1 + a2; 5
 	
-	STR R5, [R3,#4];
-	ADD R3, R3, #8;
-	LDR R5,[R3,#-4]; R5 = 11;
+	STR R5, [R3,#4]; 6
+	ADD R3, R3, #8; 7
+	LDR R5,[R3,#-4]; R5 = 11; 8
 	
-	SUB R6, R2, R1;  R6 = 1;
-	STR R6, [R4,#-4];
-	SUB R4, R4, #8;
-	LDR R6,[R4,#4];	 R6 = 1;
+	SUB R6, R2, R1;  R6 = 1; 9
+	STR R6, [R4,#-4]; 10
+	SUB R4, R4, #8; 11
+	LDR R6,[R4,#4];	 R6 = 1; 12
 	
-	MUL R7,R5,R2;R7=66
-	LDR R8,constant3; R8=3
+	MUL R7,R5,R2;R7=66 13
+	LDR R8,constant3; R8=3 
 	LDR R3,number0;R3=0
 	MULEQ R7,R1,R8; not execute,R7=66
 	ADDS R3,R3,#0; SET Z FLAG = 1
