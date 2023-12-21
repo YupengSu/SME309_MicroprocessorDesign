@@ -5,12 +5,10 @@
 `define FADD_CALCULATE 4'b0011
 `define FADD_NORMAL 4'b0100
 `define FADD_LOOP 4'b0101
-`define FADD_OVER 4'b0110
 
 `define FMUL_CHECK 4'b1001
 `define FMUL_CALCULATE 4'b1010
 `define FMUL_NORMAL 4'b1011
-`define FMUL_OVER 4'b1100
 
 module FPUnit #(
     parameter width = 32
