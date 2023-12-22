@@ -12,65 +12,227 @@ module tb_FPUnit ();
     wire [width-1:0] Result;
     wire             Busy;
 
+    reg [31:0] index;
+
     initial begin
         CLK = 1'b0;
         forever #(period / 2) CLK = ~CLK;
     end
 
-    initial
-    fork
+    initial begin
         RESET    = 1'b1;
-        Operand1 = 32'd6;
-        Operand2 = 32'd3;
+        index = 0;
+        Operand1 = 32'h42400000; // * 0 1000010 1...    1.1 * 2^5
+        Operand2 = 32'h40A00000; // * 0 1000001 01..    1.1 * 2^5
         Start    = 1'b0;
         MCycleOp = 1'b0;
         #10 RESET = 1'b0;
-        #12 Start = 1'b1;
-        #20 Start = 1'b0;
+        #2 Start = 1'b1;
+        #2 Start = 1'b0;
         #100 begin
             Start    = 1'b1;
             MCycleOp = 1'b1;
         end
-        #120 Start = 1'b0;
-        #200 begin
-            Start    = 1'b1;
-            MCycleOp = 1'b0;
-            Operand1 = 32'hfcdeffff;
-            Operand2 = 32'hfaffffff;
-        end
-        #220 Start = 1'b0;
-        #300 begin
-            Start    = 1'b1;
-            MCycleOp = 1'b1;
-        end
-        #320 Start = 1'b0;
-        #400 begin
-            Start    = 1'b1;
-            MCycleOp = 1'b0;
-            Operand1 = 32'hfcdefffd;
-            Operand2 = 32'h2;
-        end
-        #420 Start = 1'b0;
-        #500 begin
-            Start    = 1'b1;
-            MCycleOp = 1'b1;
-        end
-        #520 Start = 1'b0;
-        #600 $finish;
-    join
+        #2 Start = 1'b0;
 
-    MCycle #(
-        .width(width)
-    ) MCycle1 (
-        CLK,
-        RESET,
-        Start,
-        MCycleOp,
-        Operand1,
-        Operand2,
-        Result,
-        Busy
-    );
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1  = 32'hC2400000; // * 1 1000010 1...    -1.1 * 2^5
+            Operand2  = 32'hC0A00000; // * 1 1000001 01..    -1.1 * 2^5
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h42C80000; // * 100
+            Operand2 = 32'h43480000; // * 200
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'hBF000000; // * -0.5
+            Operand2 = 32'h3F99999A; // * 1.2
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h1EA2281D; // * 1.7169007646178E−20
+            Operand2 = 32'h9FFFFFF5; // * −1.0842014616272E−19
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h10A0201D; // * 6.3158350761658E−29
+            Operand2 = 32'h1FFFFFF5; // * 1.0842014616272E−19
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h00000000; // * 0
+            Operand2 = 32'h4248CCCC; // * 50.2
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h00800010; 
+            Operand2 = 32'h80800001; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h7F7FFFFF; 
+            Operand2 = 32'h7F7FFFFF; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h7F800000; 
+            Operand2 = 32'h1FFFFFF0; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h7F800000; 
+            Operand2 = 32'h00000003; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin: NaN0
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h7F800003; 
+            Operand2 = 32'h7F800004; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin: NaN1
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h00000003; 
+            Operand2 = 32'h7F800004; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h00000003; 
+            Operand2 = 32'h00000005; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 begin
+            index = index + 1;
+            Start    = 1'b1;
+            MCycleOp = 1'b0;
+            Operand1 = 32'h00000003; 
+            Operand2 = 32'h00800002; 
+        end
+        #2 Start = 1'b0;
+        #100 begin
+            Start    = 1'b1;
+            MCycleOp = 1'b1;
+        end
+        #2 Start = 1'b0;
+
+        #100 $finish;
+    end
 
     FPUnit #(
         .width(width)
