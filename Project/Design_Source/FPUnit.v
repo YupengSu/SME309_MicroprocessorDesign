@@ -280,16 +280,23 @@ module FPUnit #(
                     end
                 end
                 `FMUL_CALCULATE: begin
-                    e3 <= e1 + e2 - 9'd127 + 9'd1;
+                    e3 <= e1 + e2 - 9'd127;
                     m3 <= {1'b1, m1} * {1'b1, m2};
-                    s3 <= (s1 ^~ s2);
+                    s3 <= (s1 ^ s2);
                     state <= `FMUL_NORMAL;
                 end
                 `FMUL_NORMAL: begin
                     if (e3 > 9'd255) begin
                         e3 <= 9'd255;
+                        m3[22:0] <= 23'h7fffff;
                     end
-                    else;
+                    else if (m3[47]) begin
+                        e3 <= e3 + 9'b1;
+                        m3[22:0] <= m3[46:24];
+                    end
+                    else begin
+                        m3 <= m3[45:23];
+                    end
                     state <= `IDLE;
                     Done <= 1'b1;
                     FP_Busy <= 1'b0;

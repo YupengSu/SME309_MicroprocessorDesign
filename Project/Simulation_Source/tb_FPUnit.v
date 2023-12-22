@@ -22,8 +22,8 @@ module tb_FPUnit ();
     initial begin
         RESET    = 1'b1;
         index = 0;
-        Operand1 = 32'h42400000; // * 0 1000010 1...    1.1 * 2^5
-        Operand2 = 32'h40A00000; // * 0 1000001 01..    1.1 * 2^5
+        Operand1 = 32'h42400000; // * 0 10000100 1...    1.1  * 2^5
+        Operand2 = 32'h40A00000; // * 0 10000001 01..    1.01 * 2^2
         Start    = 1'b0;
         MCycleOp = 1'b0;
         #10 RESET = 1'b0;
@@ -39,8 +39,8 @@ module tb_FPUnit ();
             index = index + 1;
             Start    = 1'b1;
             MCycleOp = 1'b0;
-            Operand1  = 32'hC2400000; // * 1 1000010 1...    -1.1 * 2^5
-            Operand2  = 32'hC0A00000; // * 1 1000001 01..    -1.1 * 2^5
+            Operand1  = 32'hC2400000; // * 1 10000100 1...    -1.1  * 2^5
+            Operand2  = 32'hC0A00000; // * 1 10000001 01..    -1.01 * 2^2
         end
         #2 Start = 1'b0;
         #100 begin
