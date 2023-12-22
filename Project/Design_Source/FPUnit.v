@@ -238,9 +238,8 @@ module FPUnit #(
                     end
                 end
                 `FADD_LOOP: begin
-                    if (!m3[23+23]) begin
+                    if (!m3[23]) begin
                         if (e3 == 9'b0) begin
-                            m3 <= m3[22+23:0+23];
                             state <= `IDLE;
                             Done <= 1'b1;
                             FP_Busy <= 1'b0;
@@ -252,7 +251,7 @@ module FPUnit #(
                         end
                     end
                     else begin
-                        m3 <= m3[22+23:0+23];
+                        m3 <= m3[22:0];
                         state <= `IDLE;
                         Done <= 1'b1;
                     end
