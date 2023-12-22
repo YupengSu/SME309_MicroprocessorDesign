@@ -237,12 +237,12 @@ module FPUnit #(
                         if (m3[24]) begin
                             e3 <= e3 + 9'b1;
                             s3 <= s1;
-                            m3 <= m3[23:1];
+                            m3[22:0] <= m3[23:1];
                         end
                         else begin
                             e3 <= e3;
                             s3 <= s1;
-                            m3 <= m3[22:0];
+                            m3[22:0] <= m3[22:0];
                         end
                         state <= `IDLE;
                         Done <= 1'b1;
@@ -273,7 +273,7 @@ module FPUnit #(
                         end
                     end
                     else begin
-                        m3 <= m3[22:0];
+                        // m3 <= m3[22:0];
                         state <= `IDLE;
                         Done <= 1'b1;
                         FP_Busy <= 1'b0;
@@ -295,7 +295,7 @@ module FPUnit #(
                         m3[22:0] <= m3[46:24];
                     end
                     else begin
-                        m3 <= m3[45:23];
+                        m3[22:0] <= m3[45:23];
                     end
                     state <= `IDLE;
                     Done <= 1'b1;
