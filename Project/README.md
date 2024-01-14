@@ -56,7 +56,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 #### Test & Simulation:
 
-**TODO: Yupeng Su**
+**TODO: Si Xu**
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
 

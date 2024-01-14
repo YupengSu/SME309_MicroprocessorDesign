@@ -35,7 +35,6 @@ module ARM(
     wire NoWriteD;
     wire M_StartD;
     wire MCycleOpD;
-    wire M_WD;
     wire [3:0] CondD;
     wire [6:0] shControlD;
 
@@ -61,7 +60,6 @@ module ARM(
     reg NoWriteE;
     reg M_StartE;
     reg MCycleOpE;
-    reg M_WE;
     reg [3:0] CondE;
     reg [6:0] shControlE;
 
@@ -72,7 +70,6 @@ module ARM(
     wire PCSrcE;
     wire RegWriteE;
     wire MemWriteE;
-    wire M_WriteE;
 
     wire [1:0] ShE;
     wire [4:0] Shamt5E;
@@ -84,6 +81,7 @@ module ARM(
     wire [3:0] ALUFlagsE;
     wire [31:0] MCycleResultE;
     wire M_BusyE;
+    wire M_DoneE;
     wire [31:0] OpResultE;
     wire [31:0] WriteDataE;
 
@@ -170,7 +168,6 @@ module ARM(
         .NoWrite(NoWriteD),
         .M_Start(M_StartD),
         .MCycleOp(MCycleOpD),
-        .M_W(M_WD)
     );
 
     //MC04. Add Datapath
@@ -219,7 +216,6 @@ module ARM(
             NoWriteE <= 0;
             M_StartE <= 0;
             MCycleOpE <= 0;
-            M_WE <= 0;
 
             CondE <= 0;
             shControlE <= 0;
@@ -244,7 +240,6 @@ module ARM(
             NoWriteE <= NoWriteE;
             M_StartE <= M_StartE;
             MCycleOpE <= MCycleOpE;
-            M_WE <= M_WE;
 
             CondE <= CondE;
             shControlE <= shControlE;
@@ -269,7 +264,6 @@ module ARM(
             NoWriteE <= NoWriteD;
             M_StartE <= M_StartD;
             MCycleOpE <= MCycleOpD;
-            M_WE <= M_WD;
 
             CondE <= CondD;
             shControlE <= shControlD;
@@ -295,12 +289,10 @@ module ARM(
         .FlagW(FlagWE),
         .Cond(CondE),
         .ALUFlags(ALUFlagsE),
-        .M_W(M_WE),
 
         .PCSrc(PCSrcE),
         .RegWrite(RegWriteE),
         .MemWrite(MemWriteE),
-        .M_Write(M_WriteE)
     );
 
     assign ShE = shControlE[1:0];
@@ -337,10 +329,35 @@ module ARM(
         .Operand2(WriteDataE),
 
         .Result(MCycleResultE),
-        .Busy(M_BusyE)
-    );   
+        .Busy(M_BusyE),
+        .Done(M_DoneE)
+    );
 
-    assign OpResultE = M_WriteE? MCycleResultE: ALUResultE;
+    MCycleReg MCycleReg1 (
+        .M_StartE(M_StartE),
+        .M_DoneE(M_DoneE),
+
+        .InstrE(InstrE),
+        .RegWriteE(RegWriteE),
+        .MemWriteE(MemWriteE),
+        .MemtoRegE(MemtoRegE),
+        .WriteDataE(WriteDataE),
+        .RA2E(RA2E),
+        .WA3E(WA3E),
+
+        .MCycleResultE(MCycleResultE),
+        .ALUResultE(ALUResultE),
+
+        .InstrRE(InstrRE),
+        .RegWriteRE(RegWriteRE),
+        .MemWriteRE(MemWriteRE),
+        .MemtoRegRE(MemtoRegRE),
+        .WriteDataRE(WriteDataRE),
+        .RA2RE(RA2RE),
+        .WA3RE(WA3RE),
+        
+        .OpResultE(OpResultRE)
+    );
 
     // PIPLINE 4
     always @(posedge CLK) begin
@@ -358,13 +375,13 @@ module ARM(
         else begin
             InstrM <= InstrE;
 
-            RegWriteM <= RegWriteE;
-            MemWriteM <= MemWriteE;
-            MemtoRegM <= MemtoRegE;
-            OpResultM <= OpResultE;
-            WriteDataM <= WriteDataE;
-            RA2M <= RA2E;
-            WA3M <= WA3E;
+            RegWriteM <= RegWriteRE;
+            MemWriteM <= MemWriteRE;
+            MemtoRegM <= MemtoRegRE;
+            OpResultM <= OpResultRE;
+            WriteDataM <= WriteDataRE;
+            RA2M <= RA2RE;
+            WA3M <= WA3RE;
         end
     end
 

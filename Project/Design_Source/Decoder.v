@@ -13,7 +13,6 @@ module Decoder(
     output reg NoWrite,
     output reg M_Start,
     output reg MCycleOp,
-    output reg M_W
 ); 
     reg [1:0] ALUOp;
     reg [1:0] MCOp;
@@ -99,13 +98,13 @@ module Decoder(
     always @(*) begin
         casex(MCOp)
             // No MCycle
-            2'b00: {M_Start,MCycleOp,M_W} = 3'b000;
+            2'b00: {M_Start,MCycleOp} = 2'b00;
             // MUL
-            2'b01: {M_Start,MCycleOp,M_W} = 3'b101;
+            2'b01: {M_Start,MCycleOp} = 2'b10;
             // DIV
-            2'b10: {M_Start,MCycleOp,M_W} = 3'b111;
+            2'b10: {M_Start,MCycleOp} = 2'b11;
 
-            default: {M_Start,MCycleOp,M_W} = 3'b000;
+            default: {M_Start,MCycleOp} = 2'b00;
         endcase
     end
 

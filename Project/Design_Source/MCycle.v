@@ -9,13 +9,33 @@ module MCycle
         input [width-1:0] Operand1, // Multiplicand / Dividend
         input [width-1:0] Operand2, // Multiplier / Divisor
         output [width-1:0] Result,  //For MUL, assign the lower-32bits result; For DIV, assign the quotient.
-        output reg Busy // Set immediately when Start is set. Cleared when the Results become ready. This bit can be used to stall the processor while multi-cycle operations are on.
+        output reg Busy, // Set immediately when Start is set. Cleared when the Results become ready. This bit can be used to stall the processor while multi-cycle operations are on.
+        output reg Done
     );
 
     localparam IDLE = 1'b0;
     localparam COMPUTING = 1'b1;
     reg state, n_state;
-    reg Done;
+    reg Operand1_reg, Operand2_reg;
+
+    // Keep the operands when state is COMPUTING
+    always @(posedge CLK or posedge RESET) begin
+        if (RESET) begin
+            Operand1_reg <= 0;
+            Operand2_reg <= 0;
+        end
+        else begin
+            if (state == IDLE) begin
+                Operand1_reg <= Operand1;
+                Operand2_reg <= Operand2;
+            end
+            else if (state == COMPUTING) begin
+                Operand1_reg <= Operand1_reg;
+                Operand2_reg <= Operand2_reg;
+            end
+        end
+    end
+
     // state machine
     always @(posedge CLK or posedge RESET) begin
         if (RESET)
@@ -66,9 +86,9 @@ module MCycle
             count <= 0;
             Done <= 0;
             if(~MCycleOp) 
-                {sign,temp_sum} <= {1'b0,{width{1'b0}},Operand1};
+                {sign,temp_sum} <= {1'b0,{width{1'b0}},Operand1_reg};
             else
-                {sign,temp_sum} <= ({1'b0,{width{1'b0}},Operand1} << 1) - {1'b0,Operand2,{width{1'b0}}};        
+                {sign,temp_sum} <= ({1'b0,{width{1'b0}},Operand1_reg} << 1) - {1'b0,Operand2_reg,{width{1'b0}}};        
             // else IDLE->IDLE: registers unchanged
         end
         // state: COMPUTING
@@ -83,7 +103,7 @@ module MCycle
                     count <= count + 1;
                 end
                 if(temp_sum[0])
-                    temp_sum <= (temp_sum + {Operand2, {width{1'b0}}}) >> 1;
+                    temp_sum <= (temp_sum + {Operand2_reg, {width{1'b0}}}) >> 1;
                 else
                     temp_sum <= temp_sum >> 1;
             end
@@ -98,11 +118,11 @@ module MCycle
                     count <= count + 1;
                 end
                 if (!sign) begin // remainder >= 0
-                    {sign,temp_sum} <= ({sign,temp_sum} << 1) - {1'b0,Operand2,{width{1'b0}}};
+                    {sign,temp_sum} <= ({sign,temp_sum} << 1) - {1'b0,Operand2_reg,{width{1'b0}}};
                     temp_sum[0] <= 1'b1;
                 end
                 else begin // remainder < 0
-                    {sign,temp_sum} <= (({sign,temp_sum} + {1'b0,Operand2,{width{1'b0}}}) << 1) - {1'b0,Operand2,{width{1'b0}}};
+                    {sign,temp_sum} <= (({sign,temp_sum} + {1'b0,Operand2_reg,{width{1'b0}}}) << 1) - {1'b0,Operand2,{width{1'b0}}};
                     temp_sum[0] <= 1'b0;
                 end
             end
