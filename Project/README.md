@@ -53,6 +53,9 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
 
    ![image-20231213173635471](./assets/image-20231213173635471.png)
+   $$
+   \text{StallF = StallD = StallE = FulshM = MBusyE}
+   $$
 
 #### Test & Simulation:
 
@@ -84,15 +87,45 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
 **TODO: Yupeng Su**
 
-1. Add module `McycleReg` : 
+1. **Add module `McycleReg` :** 
 
    **Save** signals of E stage to M stage when **M_start** posedge; (Pause MUL/DIV in Pipline)
 
    **Load** signals of E stage to M stage when **M_done** posedge; (Recover MUL/DIV in Pipline)
 
-2. Remove signal M_write : 
+2. **Remove signal M_write :** 
 
    **M_write** used to control the OpResult Multiplexer. With module `McycleReg` we can easily choose OpResult by signal **M_done**. Only when Mcycle works done, the OpResult will be assigned to **MCycleResult**,  and **ALUResult** is assigned in all other cases.
+
+3. **Change Stall & Flush Logic :**
+
+   * When **no data dependency**:
+
+     ![image-20240115003515808](./assets/image-20240115003515808.png)
+     $$
+     \text{FlushM = MStart} \\
+     \text{StallF = StallD = StallE = MDone}
+     $$
+
+   * When **data dependency**:
+
+     ![image-20240115004157030](/Users/suyupeng/Documents/GitHub/SME309_MicroprocessorDesign/Project/assets/image-20240115004157030.png)
+
+     * Case1: Read After Write
+       $$
+       \text{RMatch\_12\_DRE = (RA1D == WA3RE) || (RA2D == WA3RE)}
+       $$
+
+     * Case2: Write After Write
+       $$
+       \text{WMatch\_12\_DRE = (WA3D == WA3RE)}
+       $$
+
+     * Case3: Same MCycle Op
+
+       
+
+       
 
 #### Test & Simulation:
 
