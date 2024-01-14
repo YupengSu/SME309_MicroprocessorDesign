@@ -12,7 +12,7 @@ module Decoder(
     output reg [1:0] FlagW,
     output reg NoWrite,
     output reg M_Start,
-    output reg MCycleOp,
+    output reg MCycleOp
 ); 
     reg [1:0] ALUOp;
     reg [1:0] MCOp;

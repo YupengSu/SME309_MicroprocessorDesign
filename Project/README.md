@@ -84,6 +84,16 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
 **TODO: Yupeng Su**
 
+1. Add module `McycleReg` : 
+
+   **Save** signals of E stage to M stage when **M_start** posedge; (Pause MUL/DIV in Pipline)
+
+   **Load** signals of E stage to M stage when **M_done** posedge; (Recover MUL/DIV in Pipline)
+
+2. Remove signal M_write : 
+
+   **M_write** used to control the OpResult Multiplexer. With module `McycleReg` we can easily choose OpResult by signal **M_done**. Only when Mcycle works done, the OpResult will be assigned to **MCycleResult**,  and **ALUResult** is assigned in all other cases.
+
 #### Test & Simulation:
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.

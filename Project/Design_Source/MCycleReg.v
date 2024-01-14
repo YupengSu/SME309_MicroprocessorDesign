@@ -9,7 +9,7 @@ module MCycleReg(
     input MemtoRegE,
     input [31:0] WriteDataE,
     input [3:0] RA2E,
-    input [3:0] WA3E
+    input [3:0] WA3E,
 
     input [31:0] MCycleResultE,
     input ALUResultE,

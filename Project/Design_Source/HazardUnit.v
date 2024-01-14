@@ -60,7 +60,7 @@ module HazardUnit(
     end
 
     // Data forwarding for Mem
-    assign ForwardM = (RA2M == WA3M) & MemWriteM & MemtoRegW & RegWriteM;
+    assign ForwardM = (RA2M == WA3W) & MemWriteM & MemtoRegW & RegWriteW;
 
     /* END: FORWARDING SIGNAL */
 

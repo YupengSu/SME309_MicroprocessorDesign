@@ -82,7 +82,7 @@ module ARM(
     wire [31:0] MCycleResultE;
     wire M_BusyE;
     wire M_DoneE;
-    wire [31:0] OpResultE;
+    wire [31:0] OpResultRE;
     wire [31:0] WriteDataE;
 
     // Memory Block:
@@ -167,7 +167,7 @@ module ARM(
         .FlagW(FlagWD),
         .NoWrite(NoWriteD),
         .M_Start(M_StartD),
-        .MCycleOp(MCycleOpD),
+        .MCycleOp(MCycleOpD)
     );
 
     //MC04. Add Datapath
@@ -292,7 +292,7 @@ module ARM(
 
         .PCSrc(PCSrcE),
         .RegWrite(RegWriteE),
-        .MemWrite(MemWriteE),
+        .MemWrite(MemWriteE)
     );
 
     assign ShE = shControlE[1:0];
