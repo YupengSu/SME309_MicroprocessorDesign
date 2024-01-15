@@ -53,9 +53,8 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
 
    ![image-20231213173635471](./assets/image-20231213173635471.png)
-   $$
-   \text{StallF = StallD = StallE = FulshM = MBusyE}
-   $$
+   
+   $$ \text{StallF = StallD = StallE = FulshM = MBusyE} $$
 
 #### Test & Simulation:
 
@@ -68,19 +67,18 @@ Create your testbench and assembly code to verify these functions in the **simul
 #### Requirement: 
 
 When a multi-cycle instruction (e.g. MUL instruction) is executed, the CPU should execute the next instructions (instead of stalling the pipeline) if there is no data dependency between the previous instruction. For example, instruction 1 is
-$$
-\text{MUL R5, R6, R7}
-$$
+
+$$ \text{MUL R5, R6, R7} $$
 And the next instruction (instruction 2) is 
-$$
-\text{ADD R1, R2, R3}
-$$
+
+$$ \text{ADD R1, R2, R3} $$
+
 There is no data dependency between instr2 and instr1. When CPU is executing instr1, it can execute instr2 at the same time. Because Mcycle is an independent module, when it is busy, other parts of CPU can handle other instructions at the same time.
 
 However, if instruction 2 is
-$$
-\text{ADD R1, R5, R3}
-$$
+
+$$ \text{ADD R1, R5, R3} $$
+
 The data dependency between instr2 and instr1 appears, since the CPU need the result of instruction 1 to execute instruction 2, the pipeline may need to stall until the instruction 1 is done.
 
 #### Implement Workflow:
@@ -107,15 +105,11 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
      * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result) 
 
-     $$
-     \text{FlushM = MStart}
-     $$
+     $$ \text{FlushM = MStart} $$
 
      * As **M_Done** posedge, **recover signals** and **stall E stage** (Write result)
 
-     $$
-     \text{StallF = StallD = StallE = MDone}
-     $$
+     $$ \text{StallF = StallD = StallE = MDone} $$
 
      
 
@@ -124,9 +118,8 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      ![image-20240115004157030](./assets/image-20240115004157030.png)
 
      * Case1: Read After Write (R symbols the saved registers in MCycleReg)
-       $$
-       \text{RMatch\_12D\_R = (RA1D == WA3R) || (RA2D == WA3R)}
-       $$
+       
+       $$ \text{RMatch\_12D\_R = (RA1D == WA3R) || (RA2D == WA3R)} $$
 
      * Case2: Write After Write
        $$
@@ -134,18 +127,14 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
        $$
 
      * Case3: Same MCycle Op
-       $$
-       \text{M\_StartD}
-       $$
+       
+       $$ \text{M\_StartD} $$
 
      * Combine all cases (Stall D stage)
-       $$
-       \text{MCycleStall = (RMatch | WMatch | M\_StartD ) \& M\_Busy}
-       $$
+       
+       $$ \text{MCycleStall = (RMatch | WMatch | M\_StartD ) \& M\_Busy}$$
 
-       $$
-       \text{StallF = StallD = FlushE = MCycleStall}
-       $$
+       $$ \text{StallF = StallD = FlushE = MCycleStall} $$
 
      * Also do same flush&stall as **no data dependency**.
 
