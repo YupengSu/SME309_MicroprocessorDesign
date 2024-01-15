@@ -1,5 +1,7 @@
 
 module MCycleReg(
+    input CLK,
+
     input M_StartE,
     input M_DoneE,
 
@@ -12,7 +14,7 @@ module MCycleReg(
     input [3:0] WA3E,
 
     input [31:0] MCycleResultE,
-    input ALUResultE,
+    input [31:0] ALUResultE,
 
     output [31:0] InstrRE,
     output RegWriteRE,
@@ -33,24 +35,24 @@ module MCycleReg(
     reg [31:0] WriteDataR;
     reg [3:0] RA2R;
 
-    always @(*) begin
+    always @(negedge CLK) begin
         if (M_StartE) begin // Start: save the MCycle Registers
-            InstrR = InstrE;
-            RegWriteR = RegWriteE;
-            MemWriteR = MemWriteE;
-            MemtoRegR = MemtoRegE;
-            WriteDataR = WriteDataE;
-            RA2R = RA2E;
-            WA3R = WA3E;
+            InstrR <= InstrE;
+            RegWriteR <= RegWriteE;
+            MemWriteR <= MemWriteE;
+            MemtoRegR <= MemtoRegE;
+            WriteDataR <= WriteDataE;
+            RA2R <= RA2E;
+            WA3R <= WA3E;
         end
         else begin // Not Start: hold the MCycle Registers
-            InstrR = InstrR;
-            RegWriteR = RegWriteR;
-            MemWriteR = MemWriteR;
-            MemtoRegR = MemtoRegR;
-            WriteDataR = WriteDataR;
-            RA2R = RA2R;
-            WA3R = WA3R;
+            InstrR <= InstrR;
+            RegWriteR <= RegWriteR;
+            MemWriteR <= MemWriteR;
+            MemtoRegR <= MemtoRegR;
+            WriteDataR <= WriteDataR;
+            RA2R <= RA2R;
+            WA3R <= WA3R;
         end
     end
 

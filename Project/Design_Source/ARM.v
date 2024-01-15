@@ -84,16 +84,16 @@ module ARM(
     wire M_DoneE;
     wire [31:0] WriteDataE;
 
-    wire [31:0] InstrRE,
-    wire RegWriteRE,
-    wire MemWriteRE,
-    wire MemtoRegRE,
-    wire [31:0] WriteDataRE,
-    wire [3:0] RA2RE,
-    wire [3:0] WA3RE,
+    wire [31:0] InstrRE;
+    wire RegWriteRE;
+    wire MemWriteRE;
+    wire MemtoRegRE;
+    wire [31:0] WriteDataRE;
+    wire [3:0] RA2RE;
+    wire [3:0] WA3RE;
     wire [31:0] OpResultRE;
 
-    wire [3:0] WA3R
+    wire [3:0] WA3R;
 
     // Memory Block:
     wire FlushM;
@@ -136,7 +136,7 @@ module ARM(
         .CLK(CLK),
         .Reset(Reset),
         .PCSrc(PCSrcE),
-        .Result(OpResultE),
+        .Result(OpResultRE),
         .Stall(StallF),
 
         .PC(PCF),
@@ -344,6 +344,8 @@ module ARM(
     );
 
     MCycleReg MCycleReg1 (
+        .CLK(CLK),
+        
         .M_StartE(M_StartE),
         .M_DoneE(M_DoneE),
 
@@ -365,8 +367,9 @@ module ARM(
         .WriteDataRE(WriteDataRE),
         .RA2RE(RA2RE),
         .WA3RE(WA3RE),
-        
-        .OpResultE(OpResultRE)
+        .OpResultRE(OpResultRE),
+
+        .WA3R(WA3R)
     );
 
     // PIPLINE 4
@@ -423,6 +426,7 @@ module ARM(
     HazardUnit HazardUnit1 (
         .RA1D(RA1D),
         .RA2D(RA2D),
+        .WA3D(WA3D),
         .RA1E(RA1E),
         .RA2E(RA2E),
         .WA3E(WA3E),
