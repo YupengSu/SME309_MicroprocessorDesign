@@ -11,6 +11,7 @@ module tb_FPUnit ();
     reg  [width-1:0] Operand2;
     wire [width-1:0] Result;
     wire             Busy;
+    wire             Done;
 
     reg [31:0] index;
 
@@ -241,10 +242,11 @@ module tb_FPUnit ();
         .RESET      (RESET),
         .FP_Start   (Start),
         .FPUnitOp   (MCycleOp),
-        .FP_Operand1(Operand1),
-        .FP_Operand2(Operand2),
+        .FP_Operand1_in(Operand1),
+        .FP_Operand2_in(Operand2),
         .Result     (Result),
-        .FP_Busy    (Busy)
+        .FP_Busy    (Busy),
+        .FP_Done    (Done)
     );
 
 
