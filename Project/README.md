@@ -85,13 +85,15 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
 #### Implement Workflow:
 
-**TODO: Yupeng Su**
+**FINISHED: Yupeng Su**
 
 1. **Add module `McycleReg` :** 
 
    **Save** signals of E stage to M stage when **M_start** posedge; (Pause MUL/DIV in Pipline)
 
    **Load** signals of E stage to M stage when **M_done** posedge; (Recover MUL/DIV in Pipline)
+
+   To avoid latch, I changed the combinatorial logic to a sequential logic implementation same as `RegisterFile`, using **CLK negedge** change the registers.
 
 2. **Remove signal M_write :** 
 
