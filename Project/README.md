@@ -58,7 +58,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 #### Test & Simulation:
 
-**TODO: Si Xu**
+**TODO: Xu Si **
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
 
@@ -69,7 +69,6 @@ Create your testbench and assembly code to verify these functions in the **simul
 When a multi-cycle instruction (e.g. MUL instruction) is executed, the CPU should execute the next instructions (instead of stalling the pipeline) if there is no data dependency between the previous instruction. For example, instruction 1 is
 
 $$ \text{MUL R5, R6, R7} $$
-
 And the next instruction (instruction 2) is 
 
 $$ \text{ADD R1, R2, R3} $$
@@ -104,13 +103,15 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
      ![image-20240115003515808](./assets/image-20240115003515808.png)
 
-     * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result) 
+     * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result)
 
-     $$ \text{FlushM = MStart} $$
+       $$ \text{FlushM = MStart} $$
 
      * As **M_Done** posedge, **recover signals** and **stall E stage** (Write result)
 
-     $$ \text{StallF = StallD = StallE = MDone} $$
+       $$ \text{StallF = StallD = StallE = MDone} $$
+
+     
 
    * When **data dependency** :
 
@@ -121,23 +122,24 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
        $$ \text{RMatch\_12D\_R = (RA1D == WA3R) || (RA2D == WA3R)} $$
 
      * Case2: Write After Write
-       $$
-       \text{WMatch\_3D\_R = (WA3D == WA3R)}
-       $$
-
-     * Case3: Same MCycle Op
        
-       $$ \text{M\_StartD} $$
-
+       $$ \text{WMatch\_3D\_R = (WA3D == WA3R)} $$
+       
+     * Case3: Same MCycle Op
+       $$ \text{M\_StartD}
+       $$
+     
      * Combine all cases (Stall D stage)
        
-       $$ \text{MCycleStall = (RMatch | WMatch | M\_StartD ) \& M\_Busy}$$
-
+       $$ \text{MCycleStall = (RMatch | WMatch | M\_StartD ) \& M\_Busy} $$
+       
        $$ \text{StallF = StallD = FlushE = MCycleStall} $$
-
+       
      * Also do same flush&stall as **no data dependency**.
 
 #### Test & Simulation:
+
+**TODO: Xu Si**
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
 
