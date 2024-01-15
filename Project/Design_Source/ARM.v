@@ -82,8 +82,18 @@ module ARM(
     wire [31:0] MCycleResultE;
     wire M_BusyE;
     wire M_DoneE;
-    wire [31:0] OpResultRE;
     wire [31:0] WriteDataE;
+
+    wire [31:0] InstrRE,
+    wire RegWriteRE,
+    wire MemWriteRE,
+    wire MemtoRegRE,
+    wire [31:0] WriteDataRE,
+    wire [3:0] RA2RE,
+    wire [3:0] WA3RE,
+    wire [31:0] OpResultRE;
+
+    wire [3:0] WA3R
 
     // Memory Block:
     wire FlushM;
@@ -373,7 +383,7 @@ module ARM(
             WA3M <= 0;
         end
         else begin
-            InstrM <= InstrE;
+            InstrM <= InstrRE;
 
             RegWriteM <= RegWriteRE;
             MemWriteM <= MemWriteRE;
@@ -416,10 +426,13 @@ module ARM(
         .RA1E(RA1E),
         .RA2E(RA2E),
         .WA3E(WA3E),
+        .WA3R(WA3R),
         .RegWriteE(RegWriteE),
         .MemtoRegE(MemtoRegE),
         .PCSrcE(PCSrcE),
+        .M_StartE(M_StartE),
         .M_BusyE(M_BusyE),
+        .M_DoneE(M_DoneE),
         .WA3M(WA3M),
         .RegWriteM(RegWriteM),
         .RA2M(RA2M),

@@ -21,8 +21,9 @@ module MCycleReg(
     output [31:0] WriteDataRE,
     output [3:0] RA2RE,
     output [3:0] WA3RE,
-    
-    output [31:0] OpResultRE
+    output [31:0] OpResultRE,
+
+    output reg [3:0] WA3R
     );
     // Save MCycle Registers
     reg [31:0] InstrR;
@@ -31,7 +32,6 @@ module MCycleReg(
     reg MemtoRegR;
     reg [31:0] WriteDataR;
     reg [3:0] RA2R;
-    reg [3:0] WA3R;
 
     always @(*) begin
         if (M_StartE) begin // Start: save the MCycle Registers

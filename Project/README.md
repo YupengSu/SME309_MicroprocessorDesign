@@ -97,35 +97,55 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    **M_write** used to control the OpResult Multiplexer. With module `McycleReg` we can easily choose OpResult by signal **M_done**. Only when Mcycle works done, the OpResult will be assigned to **MCycleResult**,  and **ALUResult** is assigned in all other cases.
 
-3. **Change Stall & Flush Logic :**
+3. **Change Stall & Flush Logic (Update HazardUnit):**
 
    * When **no data dependency**:
 
      ![image-20240115003515808](./assets/image-20240115003515808.png)
+
+     * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result) 
+
      $$
-     \text{FlushM = MStart} \\
+     \text{FlushM = MStart}
+     $$
+
+     * As **M_Done** posedge, **recover signals** and **stall E stage** (Write result)
+
+     $$
      \text{StallF = StallD = StallE = MDone}
      $$
 
-   * When **data dependency**:
+     
 
-     ![image-20240115004157030](/Users/suyupeng/Documents/GitHub/SME309_MicroprocessorDesign/Project/assets/image-20240115004157030.png)
+   * When **data dependency** :
 
-     * Case1: Read After Write
+     ![image-20240115004157030](./assets/image-20240115004157030.png)
+
+     * Case1: Read After Write (R symbols the saved registers in MCycleReg)
        $$
-       \text{RMatch\_12\_DRE = (RA1D == WA3RE) || (RA2D == WA3RE)}
+       \text{RMatch\_12D\_R = (RA1D == WA3R) || (RA2D == WA3R)}
        $$
 
      * Case2: Write After Write
        $$
-       \text{WMatch\_12\_DRE = (WA3D == WA3RE)}
+       \text{WMatch\_3D\_R = (WA3D == WA3R)}
        $$
 
      * Case3: Same MCycle Op
+       $$
+       \text{M\_StartD}
+       $$
 
-       
+     * Combine all cases (Stall D stage)
+       $$
+       \text{MCycleStall = RMatch \& WMatch \& M\_StartD \& M\_Busy}
+       $$
 
-       
+       $$
+       \text{StallF = StallD = FlushE = MCycleStall}
+       $$
+
+     * Also do same flush&stall as **no data dependency**.
 
 #### Test & Simulation:
 

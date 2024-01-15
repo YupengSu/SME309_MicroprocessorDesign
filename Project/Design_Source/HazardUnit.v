@@ -4,10 +4,13 @@ module HazardUnit(
     input [3:0] RA1E,
     input [3:0] RA2E,
     input [3:0] WA3E,
+    input [3:0] WA3R,
     input MemtoRegE,
     input RegWriteE,
     input PCSrcE,
+    input M_StartE,
     input M_BusyE,
+    input M_DoneE,
     input [3:0] WA3M,
     input RegWriteM,
     input [3:0] RA2M,
@@ -74,16 +77,19 @@ module HazardUnit(
     // Stalling for Branch
     wire BranchStall;
     assign BranchStall = PCSrcE;
-    // Stalling for MCycle
+    // Stalling for No-Stall MCycle
+    wire RMatch_12D_R, WMatch_3D_R;
+    assign RMatch_12D_R = (RA1D == WA3R) | (RA2D == WA3R);
+    assign WMatch_3D_R = (WA3D == WA3R);
     wire MCycleStall;
-    assign MCycleStall = M_BusyE;
+    assign MCycleStall = RMatch_12D_R & WMatch_3D_R & M_StartE & M_BusyE;
 
-    assign StallF = Idrstall || MCycleStall;
-    assign StallD = Idrstall || MCycleStall;
-    assign StallE = MCycleStall;
+    assign StallF = Idrstall || MCycleStall || M_DoneE;
+    assign StallD = Idrstall || MCycleStall || M_DoneE;
+    assign StallE = MCycleStall || M_DoneE;
     assign FlushD = BranchStall;
-    assign FlushE = Idrstall || BranchStall;
-    assign FlushM = MCycleStall;
+    assign FlushE = Idrstall || BranchStall || MCycleStall;
+    assign FlushM = M_StartE;
 
     /* END: STALL_FLUSH SIGNAL */
 
