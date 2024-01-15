@@ -1,6 +1,7 @@
 module HazardUnit(
     input [3:0] RA1D,
     input [3:0] RA2D,
+    input [3:0] WA3D,
     input [3:0] RA1E,
     input [3:0] RA2E,
     input [3:0] WA3E,

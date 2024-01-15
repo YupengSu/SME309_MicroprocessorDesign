@@ -16,7 +16,7 @@ module MCycle
     localparam IDLE = 1'b0;
     localparam COMPUTING = 1'b1;
     reg state, n_state;
-    reg Operand1_reg, Operand2_reg;
+    reg [width-1:0] Operand1_reg, Operand2_reg;
 
     // Keep the operands when state is COMPUTING
     always @(posedge CLK or posedge RESET) begin
