@@ -83,7 +83,7 @@ module HazardUnit(
     assign RMatch_12D_R = (RA1D == WA3R) | (RA2D == WA3R);
     assign WMatch_3D_R = (WA3D == WA3R);
     wire MCycleStall;
-    assign MCycleStall = RMatch_12D_R & WMatch_3D_R & M_StartE & M_BusyE;
+    assign MCycleStall = (RMatch_12D_R | WMatch_3D_R | M_StartE) & M_BusyE;
 
     assign StallF = Idrstall || MCycleStall || M_DoneE;
     assign StallD = Idrstall || MCycleStall || M_DoneE;
