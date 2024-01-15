@@ -138,7 +138,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
      * Combine all cases (Stall D stage)
        $$
-       \text{MCycleStall = RMatch \& WMatch \& M\_StartD \& M\_Busy}
+       \text{MCycleStall = (RMatch | WMatch | M\_StartD ) \& M\_Busy}
        $$
 
        $$
