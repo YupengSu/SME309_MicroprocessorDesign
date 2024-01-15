@@ -81,10 +81,12 @@ module MCycle
             Done <= 0;
             sign <= 0;
         end
+        else if(n_state == IDLE) begin
+            Done <= 0;
+        end
         // state: IDLE
         else if(state == IDLE && n_state == COMPUTING) begin
             count <= 0;
-            Done <= 0;
             if(~MCycleOp) 
                 {sign,temp_sum} <= {1'b0,{width{1'b0}},Operand1_reg};
             else
