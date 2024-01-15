@@ -69,6 +69,7 @@ Create your testbench and assembly code to verify these functions in the **simul
 When a multi-cycle instruction (e.g. MUL instruction) is executed, the CPU should execute the next instructions (instead of stalling the pipeline) if there is no data dependency between the previous instruction. For example, instruction 1 is
 
 $$ \text{MUL R5, R6, R7} $$
+
 And the next instruction (instruction 2) is 
 
 $$ \text{ADD R1, R2, R3} $$
@@ -110,8 +111,6 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      * As **M_Done** posedge, **recover signals** and **stall E stage** (Write result)
 
      $$ \text{StallF = StallD = StallE = MDone} $$
-
-     
 
    * When **data dependency** :
 
