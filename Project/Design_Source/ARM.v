@@ -331,7 +331,7 @@ module ARM(
     );
 
     // USE MCycle or FPUnit
-    MCycle MCycle1 (
+ /*   MCycle MCycle1 (
         .CLK(CLK),
         .RESET(Reset),
         .Start(M_StartE),
@@ -343,12 +343,12 @@ module ARM(
         .Busy(M_BusyE),
         .Done(M_DoneE)
     );
-/*
+*/
     FPUnit FPUnit1 (
         .CLK(CLK),
         .RESET(Reset),
         .FP_Start(M_StartE),
-        .FPUnitOp(MCycleOpE),
+        .FPUnitOp_in(MCycleOpE),
         .FP_Operand1_in(SrcAE),
         .FP_Operand2_in(WriteDataE),
 
@@ -356,7 +356,7 @@ module ARM(
         .FP_Busy(M_BusyE),
         .FP_Done(M_DoneE)
     );
-*/
+
     MCycleReg MCycleReg1 (
         .CLK(CLK),
         

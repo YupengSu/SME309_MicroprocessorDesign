@@ -64,7 +64,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The assembly instructions are as below:
 
-   ```
+   ```assembly
    LDR R1, constant1; R1=5
    LDR R2, constant2; R2=6
    LDR R9, constant3; R9=3
@@ -92,7 +92,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The assembly instructions are as below:
 
-   ```
+   ```assembly
    LDR R1, constant1; R1=5
    LDR R2, constant2; R2=6
    LDR R3, addr1; 810
@@ -102,19 +102,21 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
    ADD R5, R1, R2
    STR R5, [R3,#4];
    ADD R3, R3, #8;
-   LDR R6, [R3,#-4]; R5 = 11;
+   LDR R6, [R3,#-4]; R6 = 11;
    STR R6, [R4,#4]
    ```
 
    - The simulation waveform is 
 
+     <img src="C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117193740548.png" alt="image-20240117193740548" style="zoom:67%;" />
      
+     When memory-memory copy happens, ForwardM should be 1, which is consistent with the waveform. Therefore,  the code implementation is valid.
 
 3. Test for Load and Use
 
    - The assembly instructions are as below:
 
-     ```
+     ```assembly
      LDR R1, constant1; R1=5
      LDR R2, constant2; R2=6
      LDR R9, constant3; R9=3
@@ -156,7 +158,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The assembly instructions are as below:
 
-     ```
+     ```assembly
      LDR R1, constant1; R1=5
      LDR R2, constant2; R2=6
      LDR R9, constant3; R9=3
@@ -198,7 +200,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The assembly instructions are as below:
 
-     ```
+     ```assembly
      LDR R1, constant1; R1=5
      LDR R2, constant2; R2=6
      LDR R3, addr1; 810
@@ -231,7 +233,9 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is
 
+     ![image-20240117164238833](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117164238833.png)
      
+     According to the assemble instructions, the final result of SEVENSEG is 57 in  hexadecimal, which is consistent with the waveform.
 
 ### 2. Non-stalling CPU for multi-cycle instructions. 
 
@@ -316,7 +320,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    - The assembly instructions are as below:
 
-     ```
+     ```assembly
      LDR R1, constant1; R1=5
      LDR R2, constant2; R2=6
      
@@ -341,13 +345,15 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    - The simulation waveform is
 
+     ![image-20240117153940296](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117153940296.png)
      
+     Since there is not RAW, there is no stalling. The final result in R5 is 1e in hexadecimal, just like what the waveform shows.
 
 2. Test for stalling situation, that is  the target register of the first  multiplication or divide instruction is same as one of the source registers of the next DP instruction.
 
    - The assembly instructions are as below:
 
-     ```
+     ```assembly
      LDR R1, constant1; R1=5
      LDR R2, constant2; R2=6
      
@@ -372,7 +378,9 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    - The simulation waveform is
 
+     ![image-20240117160547165](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117160547165.png)
      
+     Since there exists RAW, there is stall. When stalling happens, FlushE = StallD = StallF = 1, which is consistent with the waveform. Therefore, the stalling situation is achieved successfully.
 
 ### 3. Expand the ARM processor to support all the 16 Data Processing Instructions.
 
@@ -430,6 +438,12 @@ Add a Floating processing unit (FPU) in your pipelined ARM CPU to support simple
 Additionally, you should show the design ideas (such as “How to deal with Not a Number(NaN) in float?”) and the details of your design in your report.
 
 #### Test & Simulation:
+
+1. Test for single float addition (**FADD**)
+
+   
+
+2. Test for single float multiplication (**FMUL**)
 
 Test your design by writing an assembly program yourself, which should contain all these instructions. 
 

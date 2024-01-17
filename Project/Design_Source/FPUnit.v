@@ -55,7 +55,7 @@ module FPUnit #(
         if (RESET) begin
             FPUnitOp <= 0;
             FP_Operand1 <= 0;
-            FP_Operand1 <= 0;
+            FP_Operand2 <= 0;
         end
         else begin
             if (state == `IDLE) begin
@@ -66,7 +66,7 @@ module FPUnit #(
             else begin
                 FPUnitOp <= FPUnitOp;
                 FP_Operand1 <= FP_Operand1;
-                FP_Operand1 <= FP_Operand1;
+                FP_Operand2 <= FP_Operand2;
             end
         end
     end
