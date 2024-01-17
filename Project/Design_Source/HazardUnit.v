@@ -2,6 +2,7 @@ module HazardUnit(
     input [3:0] RA1D,
     input [3:0] RA2D,
     input [3:0] WA3D,
+    input MemWD,
     input M_StartD,
     input [3:0] RA1E,
     input [3:0] RA2E,
@@ -75,7 +76,7 @@ module HazardUnit(
     wire Match_12D_E;
     assign Match_12D_E = (RA1D == WA3E) | (RA2D == WA3E); 
     wire Idrstall;
-    assign Idrstall = Match_12D_E & MemtoRegE & RegWriteE;
+    assign Idrstall = Match_12D_E & MemtoRegE & RegWriteE & ~MemWD;
     // Stalling for Branch
     wire BranchStall;
     assign BranchStall = PCSrcE;

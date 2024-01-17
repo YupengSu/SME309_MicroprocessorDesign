@@ -441,6 +441,7 @@ module ARM(
         .RA1D(RA1D),
         .RA2D(RA2D),
         .WA3D(WA3D),
+        .MemWD(MemWD),
         .M_StartD(M_StartD),
         .RA1E(RA1E),
         .RA2E(RA2E),
