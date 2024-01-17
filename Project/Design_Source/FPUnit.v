@@ -75,30 +75,26 @@ module FPUnit #(
     //         state <= state;
     // end
 
-    // always @(*) begin
-    //     case (state)
-    //         `IDLE: begin
-    //             if (FP_Start) begin
-    //                 n_state = `CHECK;
-    //                 FP_Busy = 1'b1;
-    //             end 
-    //             else begin
-    //                 n_state = `IDLE;
-    //                 FP_Busy = 1'b0;
-    //             end
-    //         end
-    //         default: begin
-    //             if (~FP_Done) begin
-    //                 n_state = state;
-    //                 FP_Busy = 1'b1;
-    //             end 
-    //             else begin
-    //                 n_state = `IDLE;
-    //                 FP_Busy = 1'b0;
-    //             end
-    //         end
-    //     endcase
-    // end
+    always @(*) begin
+        case (state)
+            `IDLE: begin
+                if (FP_Start) begin
+                    FP_Busy = 1'b1;
+                end 
+                else begin
+                    FP_Busy = 1'b0;
+                end
+            end
+            default: begin
+                if (!FP_Done) begin
+                    FP_Busy = 1'b1;
+                end 
+                else begin
+                    FP_Busy = 1'b0;
+                end
+            end
+        endcase
+    end
 
     // Multi-cycle 
     always @(posedge CLK or posedge RESET) begin : COMPUTING_PROCESS  // process which does the actual computation
@@ -108,7 +104,7 @@ module FPUnit #(
             {s3, e3, m3} <= 'b0;
             temp1 <= 24'b0;
             temp2 <= 24'b0;
-            FP_Busy <= 1'b0;
+            //FP_Busy <= 1'b0;
         end 
         else begin
             case (state)
@@ -119,11 +115,11 @@ module FPUnit #(
                     temp2 <= 24'b0;
                     if (FP_Start) begin
                         state <= `CHECK;
-                        FP_Busy <= 1'b1;
+                        //FP_Busy <= 1'b1;
                     end 
                     else begin
                         state <= `IDLE;
-                        FP_Busy <= 1'b0;
+                        //FP_Busy <= 1'b0;
                 end
                 end
                 `CHECK: begin
@@ -133,13 +129,13 @@ module FPUnit #(
                                 {s3, e3[7:0], m3[22:0]} <= FP_Operand1;
                                 state <= `IDLE;
                                 FP_Done <= 1'b1;
-                                FP_Busy <= 1'b0;
+                                //FP_Busy <= 1'b0;
                             end
                             else if (infinite2) begin
                                 {s3, e3[7:0], m3[22:0]} <= FP_Operand2;
                                 state <= `IDLE;
                                 FP_Done <= 1'b1;
-                                FP_Busy <= 1'b0;
+                                //FP_Busy <= 1'b0;
                             end
                             else begin
                                 if (!FPUnitOp) begin
@@ -147,13 +143,13 @@ module FPUnit #(
                                         {s3, e3[7:0], m3[22:0]} <= FP_Operand2;
                                         state <= `IDLE;
                                         FP_Done <= 1'b1;
-                                        FP_Busy <= 1'b0;
+                                        //FP_Busy <= 1'b0;
                                     end
                                     else if ({e2, m2} == 22'b0) begin
                                         {s3, e3[7:0], m3[22:0]} <= FP_Operand1;
                                         state <= `IDLE;
                                         FP_Done <= 1'b1;
-                                        FP_Busy <= 1'b0;
+                                        //FP_Busy <= 1'b0;
                                     end
                                     else begin
                                         state <= `FADD_MATCH;
@@ -164,7 +160,7 @@ module FPUnit #(
                                         {s3, e3[7:0], m3[22:0]} <= 32'b0;
                                         state <= `IDLE;
                                         FP_Done <= 1'b1;
-                                        FP_Busy <= 1'b0;
+                                        //FP_Busy <= 1'b0;
                                     end
                                     else begin
                                         state <= `FMUL_CALCULATE;
@@ -176,13 +172,13 @@ module FPUnit #(
                             {s3, e3[7:0], m3[22:0]} <= {s2, e2, 1'b1, m2[21:0]};
                             state <= `IDLE;
                             FP_Done <= 1'b1;
-                            FP_Busy <= 1'b0;
+                            //FP_Busy <= 1'b0;
                         end
                         2'b10: begin
                             {s3, e3[7:0], m3[22:0]} <= {s1, e1, 1'b1, m1[21:0]};
                             state <= `IDLE;
                             FP_Done <= 1'b1;
-                            FP_Busy <= 1'b0;
+                            //FP_Busy <= 1'b0;
                         end
                         2'b11: begin
                             if ((m1[22]) | (!m2[22])) begin
@@ -193,14 +189,14 @@ module FPUnit #(
                             end
                             state <= `IDLE;
                             FP_Done <= 1'b1;
-                            FP_Busy <= 1'b0;
+                            //FP_Busy <= 1'b0;
                         end
                         default: begin
                             {s3, e3[7:0], m3[22:0]} <= 32'bx;
                             state <= 4'bx;
                             state <= `IDLE;
                             FP_Done <= 1'bx;
-                            FP_Busy <= 1'bx;
+                            //FP_Busy <= 1'bx;
                         end
                     endcase
                 end
@@ -210,7 +206,7 @@ module FPUnit #(
                             {s3, e3[7:0], m3[22:0]} <= FP_Operand1;
                             state <= `IDLE;
                             FP_Done <= 1'b1;
-                            FP_Busy <= 1'b0;
+                            //FP_Busy <= 1'b0;
                         end
                         else begin
                             temp1 <= {1'b1, m1};
@@ -224,7 +220,7 @@ module FPUnit #(
                             {s3, e3[7:0], m3[22:0]} <= FP_Operand2;
                             state <= `IDLE;
                             FP_Done <= 1'b1;
-                            FP_Busy <= 1'b0;
+                            //FP_Busy <= 1'b0;
                         end
                         else begin
                             temp1 <= ({1'b1, m1} >> (e2 - e1));
@@ -252,7 +248,7 @@ module FPUnit #(
                             {s3, e3, m3[22:0]} <= 32'b0;
                             state <= `IDLE;
                             FP_Done <= 1'b1;
-                            FP_Busy <= 1'b0;
+                            //FP_Busy <= 1'b0;
                         end
                     end
                 end
@@ -270,7 +266,7 @@ module FPUnit #(
                         end
                         state <= `IDLE;
                         FP_Done <= 1'b1;
-                        FP_Busy <= 1'b0;
+                        //FP_Busy <= 1'b0;
                     end
                     else begin
                         if (temp1 >= temp2) begin
@@ -288,7 +284,7 @@ module FPUnit #(
                         if (e3 == 9'b0) begin
                             state <= `IDLE;
                             FP_Done <= 1'b1;
-                            FP_Busy <= 1'b0;
+                            //FP_Busy <= 1'b0;
                         end
                         else begin
                             e3 <= e3 - 9'b1;
@@ -300,7 +296,7 @@ module FPUnit #(
                         // m3 <= m3[22:0];
                         state <= `IDLE;
                         FP_Done <= 1'b1;
-                        FP_Busy <= 1'b0;
+                        //FP_Busy <= 1'b0;
                     end
                 end
                 `FMUL_CALCULATE: begin
@@ -323,12 +319,12 @@ module FPUnit #(
                     end
                     state <= `IDLE;
                     FP_Done <= 1'b1;
-                    FP_Busy <= 1'b0;
+                    //FP_Busy <= 1'b0;
                 end
                 default: begin
                     state <= `IDLE;
                     FP_Done <= 1'b0;
-                    FP_Busy <= 1'b0;
+                    //FP_Busy <= 1'b0;
                 end
             endcase
         end
