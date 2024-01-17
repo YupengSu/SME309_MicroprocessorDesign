@@ -46,22 +46,15 @@ integer i;
 // Instruction Memory
 //----------------------------------------------------------------
 initial begin	    
-			INSTR_MEM[0] = 32'hE59F1204; 
+		    INSTR_MEM[0] = 32'hE59F1204; 
 			INSTR_MEM[1] = 32'hE59F2204; 
 			INSTR_MEM[2] = 32'hE59F9204; 
-			INSTR_MEM[3] = 32'hE59F31EC; 
-			INSTR_MEM[4] = 32'hE59F41EC; 
-			INSTR_MEM[5] = 32'hE59FC1EC; 
-			INSTR_MEM[6] = 32'hE0815002; 
-			INSTR_MEM[7] = 32'hE5835004; 
-			INSTR_MEM[8] = 32'hE2833008; 
-			INSTR_MEM[9] = 32'hE5136004; 
-			INSTR_MEM[10] = 32'hE5846004; 
-			INSTR_MEM[11] = 32'hEAFFFFFE; 
-			for(i = 12; i < 128; i = i+1) begin 
+			INSTR_MEM[3] = 32'hE0050291; 
+			INSTR_MEM[4] = 32'hE0826009; 
+			INSTR_MEM[5] = 32'hEAFFFFFE; 
+			for(i = 6; i < 128; i = i+1) begin 
 				INSTR_MEM[i] = 32'h0; 
 			end
-
 end
 
 //----------------------------------------------------------------

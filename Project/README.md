@@ -60,7 +60,178 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
 **TODO: Xu Si **
 
-Create your testbench and assembly code to verify these functions in the **simulation waveform**.
+1. Test for Data Forwarding of DP instructions
+
+   - The assembly instructions are as below:
+
+   ```
+   LDR R1, constant1; R1=5
+   LDR R2, constant2; R2=6
+   LDR R9, constant3; R9=3
+   
+   ADD R5, R1, R2
+   SUB R6, R5, R9
+   ADD R7, R1, R5
+   SUB R8, R5, R2
+   
+   constant1
+   		DCD 0x00000005; 
+   constant2
+   		DCD 0x00000006;
+   constant3 
+   		DCD 0x00000003;
+   ```
+
+   - The simulation waveform is 
+
+     ![image-20240116112711171](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240116112711171.png)
+
+     From the change of ForwardAE and ForwardBE, we can see that DataForwarding of DP is valid.
+
+2. Test for Memory-memory copy
+
+   - The assembly instructions are as below:
+
+   ```
+   LDR R1, constant1; R1=5
+   LDR R2, constant2; R2=6
+   LDR R3, addr1; 810
+   LDR R4, addr2; 820
+   ADD R5, R1, R2; R5 = a1 + a2
+   
+   ADD R5, R1, R2
+   STR R5, [R3,#4];
+   ADD R3, R3, #8;
+   LDR R6, [R3,#-4]; R5 = 11;
+   STR R6, [R4,#4]
+   ```
+
+   - The simulation waveform is 
+
+     
+
+3. Test for Load and Use
+
+   - The assembly instructions are as below:
+
+     ```
+     LDR R1, constant1; R1=5
+     LDR R2, constant2; R2=6
+     LDR R9, constant3; R9=3
+     LDR R3, addr1; 810
+     LDR R4, addr2; 820
+     LDR R12,addr3; 830
+     
+     ADD R5, R1, R2
+     STR R5, [R3,#4];
+     ADD R3, R3, #8;
+     LDR R6, [R3,#-4]; R6 = 11;
+     SUB R7, R6, R1
+     
+     addr1
+     		DCD 0x00000810;
+     addr2 	
+     		DCD 0x00000820;
+     addr3
+     		DCD 0x00000830;
+     constant1
+     		DCD 0x00000005; 
+     constant2
+     		DCD 0x00000006;
+     constant3 
+     		DCD 0x00000003;
+     number0
+     		DCD 0x00000000;
+     
+     
+     ```
+
+   - The simulation waveform is 
+
+     ![image-20240116120722907](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240116120722907.png)
+
+     When Load and Use happens, Idrstall = StallF = StallD = 1. And from the waveform, we can see there is one more cycle between LDR instruction and SUB instruction.
+
+4. Test for EarlyBTA
+
+   - The assembly instructions are as below:
+
+     ```
+     LDR R1, constant1; R1=5
+     LDR R2, constant2; R2=6
+     LDR R9, constant3; R9=3
+     LDR R3, addr1; 810
+     LDR R4, addr2; 820
+     LDR R12,addr3; 830
+     
+     ;B   2C (The jump instrucrtion is coded in warpper directly)
+     AND R5, R1, R2
+     ORR R6, R9, R1
+     SUB R7, R2, R9
+     SUB R8, R2, R1
+     ADD R10, R9, R1
+     ADD R11, R2, R1
+     
+     addr1
+     		DCD 0x00000810;
+     addr2 	
+     		DCD 0x00000820;
+     addr3
+     		DCD 0x00000830;
+     constant1
+     		DCD 0x00000005; 
+     constant2
+     		DCD 0x00000006;
+     constant3 
+     		DCD 0x00000003;
+     number0
+     		DCD 0x00000000;
+     ```
+
+   - The simulation waveform is 
+
+     ![image-20240116115351079](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240116115351079.png)
+
+     When EarlyBTA happens, PCSrc = FlushD = FlushE = 1. And from the waveform, we can see the branch instruction really happens in advance.
+
+5. Test for multiple DP instructions
+
+   - The assembly instructions are as below:
+
+     ```
+     LDR R1, constant1; R1=5
+     LDR R2, constant2; R2=6
+     LDR R3, addr1; 810
+     LDR R4, addr2; 820
+     LDR R12,addr3; 830
+     ADD R5, R1, R2; R5 = a1 + a2;
+     
+     SUB R6, R2, R1;  R6 = 1;
+     STR R6, [R4,#-4];
+     SUB R4, R4, #8;
+     LDR R6,[R4,#4];	 R6 = 1;
+     
+     MUL R7,R5,R2;R7=66
+     LDR R8,constant3; R8=3
+     LDR R3,number0;R3=0
+     MULEQ R7,R1,R8; not execute,R7=66
+     ADDS R3,R3,#0; SET Z FLAG = 1
+     MULEQ R10,R1,R8; R10=15;
+     ADDS R10,R10,R7; R10 =66+15=81,flags are 0
+     
+     ;The divide instructions are completed in the wrapper directly.
+     ADD R3,R3,#0;;DIV R7,R7,R8; R7=66/3=22
+     ADD R3,R3,#0;;DIV R7,R7,R1; R7=22/5=4
+     ADD R3,R3,#0;;DIVEQ R7,R2,R8; not execute, R7 = 4
+     ADDS R3,R3,#0; SET Z FLAG = 1
+     ADD R3,R3,#0;;DIVEQ R11,R2,R8;R11=6/3=2;
+     ADD R11,R11,R7; R11=2+4=6
+     ADD R11,R11,R10;R11=81+6=87=0X0000 0057
+     ```
+
+   - The simulation waveform is
+
+     
 
 ### 2. Non-stalling CPU for multi-cycle instructions. 
 
@@ -141,7 +312,67 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
 **TODO: Xu Si**
 
-Create your testbench and assembly code to verify these functions in the **simulation waveform**.
+1. Test for non-stalling situation, that is  the target register of the first  multiplication or divide instruction is different from the source register of the next DP instruction.
+
+   - The assembly instructions are as below:
+
+     ```
+     LDR R1, constant1; R1=5
+     LDR R2, constant2; R2=6
+     
+     MUL R5, R1, R2
+     ADD R6, R2, R9
+     
+     addr1
+     		DCD 0x00000810;
+     addr2 	
+     		DCD 0x00000820;
+     addr3
+     		DCD 0x00000830;
+     constant1
+     		DCD 0x00000005; 
+     constant2
+     		DCD 0x00000006;
+     constant3 
+     		DCD 0x00000003;
+     number0
+     		DCD 0x00000000;
+     ```
+
+   - The simulation waveform is
+
+     
+
+2. Test for stalling situation, that is  the target register of the first  multiplication or divide instruction is same as one of the source registers of the next DP instruction.
+
+   - The assembly instructions are as below:
+
+     ```
+     LDR R1, constant1; R1=5
+     LDR R2, constant2; R2=6
+     
+     MUL R5, R1, R2
+     ADD R6, R5, R9
+     
+     addr1
+     		DCD 0x00000810;
+     addr2 	
+     		DCD 0x00000820;
+     addr3
+     		DCD 0x00000830;
+     constant1
+     		DCD 0x00000005; 
+     constant2
+     		DCD 0x00000006;
+     constant3 
+     		DCD 0x00000003;
+     number0
+     		DCD 0x00000000;
+     ```
+
+   - The simulation waveform is
+
+     
 
 ### 3. Expand the ARM processor to support all the 16 Data Processing Instructions.
 
