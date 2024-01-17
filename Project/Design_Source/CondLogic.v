@@ -10,10 +10,11 @@ module CondLogic(
     
     output PCSrc,
     output RegWrite,
-    output MemWrite
+    output MemWrite,
+    output reg C = 0
     ); 
     reg CondEx;
-    reg N = 0, Z = 0, C = 0, V = 0;
+    reg N = 0, Z = 0, V = 0;
 
     // ===============================================
     //             Flags Register Update
