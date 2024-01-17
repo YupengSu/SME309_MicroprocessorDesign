@@ -16,20 +16,26 @@ module MCycle
     localparam IDLE = 1'b0;
     localparam COMPUTING = 1'b1;
     reg state, n_state;
-    reg [width-1:0] Operand1_reg, Operand2_reg;
+
+    reg MCycleOp_reg;
+    reg [width-1:0] Operand1_reg;
+    reg [width-1:0] Operand2_reg;
 
     // Keep the operands when state is COMPUTING
     always @(posedge CLK or posedge RESET) begin
         if (RESET) begin
+            MCycleOp_reg <= 0;
             Operand1_reg <= 0;
             Operand2_reg <= 0;
         end
         else begin
             if (state == IDLE) begin
+                MCycleOp_reg <= MCycleOp;
                 Operand1_reg <= Operand1;
                 Operand2_reg <= Operand2;
             end
             else if (state == COMPUTING) begin
+                MCycleOp_reg <= MCycleOp_reg;
                 Operand1_reg <= Operand1_reg;
                 Operand2_reg <= Operand2_reg;
             end
@@ -88,14 +94,14 @@ module MCycle
         else if(state == IDLE && n_state == COMPUTING) begin
             count <= 0;
             if(~MCycleOp) 
-                {sign,temp_sum} <= {1'b0,{width{1'b0}},Operand1_reg};
+                {sign,temp_sum} <= {1'b0,{width{1'b0}},Operand1};
             else
-                {sign,temp_sum} <= ({1'b0,{width{1'b0}},Operand1_reg} << 1) - {1'b0,Operand2_reg,{width{1'b0}}};        
+                {sign,temp_sum} <= ({1'b0,{width{1'b0}},Operand1} << 1) - {1'b0,Operand2,{width{1'b0}}};        
             // else IDLE->IDLE: registers unchanged
         end
         // state: COMPUTING
         else if(n_state == COMPUTING) begin
-            if(~MCycleOp) begin // Multiply operation
+            if(~MCycleOp_reg) begin // Multiply operation
                 if(count == width-1) begin
                     Done <= 1'b1;
                     count <= 0;
@@ -124,7 +130,7 @@ module MCycle
                     temp_sum[0] <= 1'b1;
                 end
                 else begin // remainder < 0
-                    {sign,temp_sum} <= (({sign,temp_sum} + {1'b0,Operand2_reg,{width{1'b0}}}) << 1) - {1'b0,Operand2,{width{1'b0}}};
+                    {sign,temp_sum} <= (({sign,temp_sum} + {1'b0,Operand2_reg,{width{1'b0}}}) << 1) - {1'b0,Operand2_reg,{width{1'b0}}};
                     temp_sum[0] <= 1'b0;
                 end
             end

@@ -330,7 +330,8 @@ module ARM(
         .ALUFlags(ALUFlagsE)
     );
 
-    MCycle MCycle1 (
+    // USE MCycle or FPUnit
+ /*   MCycle MCycle1 (
         .CLK(CLK),
         .RESET(Reset),
         .Start(M_StartE),
@@ -341,6 +342,19 @@ module ARM(
         .Result(MCycleResultE),
         .Busy(M_BusyE),
         .Done(M_DoneE)
+    );
+*/
+    FPUnit FPUnit1 (
+        .CLK(CLK),
+        .RESET(Reset),
+        .FP_Start(M_StartE),
+        .FPUnitOp_in(MCycleOpE),
+        .FP_Operand1_in(SrcAE),
+        .FP_Operand2_in(WriteDataE),
+
+        .Result(MCycleResultE),
+        .FP_Busy(M_BusyE),
+        .FP_Done(M_DoneE)
     );
 
     MCycleReg MCycleReg1 (
@@ -427,6 +441,8 @@ module ARM(
         .RA1D(RA1D),
         .RA2D(RA2D),
         .WA3D(WA3D),
+        .MemWD(MemWD),
+        .M_StartD(M_StartD),
         .RA1E(RA1E),
         .RA2E(RA2E),
         .WA3E(WA3E),
