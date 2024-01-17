@@ -5,36 +5,11 @@
 
 	LDR R1, constant1; R1=5
 	LDR R2, constant2; R2=6
-	;LDR R9, constant3; R9=3
 	LDR R3, addr1; 810
 	LDR R4, addr2; 820
 	LDR R12,addr3; 830
 	
 	ADD R5, R1, R2; R5 = a1 + a2;
-	
-	;Data Forwarding Testing(Memory-Memory Copy)
-	;ADD R5, R1, R2
-	;STR R5, [R3,#4];
-	;ADD R3, R3, #8;
-	;LDR R6, [R3,#-4]; R5 = 11;
-	;STR R6, [R4,#4]
-	
-	;Early BTA Test
-	;B   2C in wrapper, we will insert jump instructions manually.
-	;AND R5, R1, R2
-	;ORR R6, R9, R1
-	;SUB R7, R2, R9
-	;SUB R8, R2, R1
-	;ADD R10, R9, R1
-	;ADD R11, R2, R1
-	
-	;Load and Use Test(whether stall?)
-	;ADD R5, R1, R2
-	;STR R5, [R3,#4];
-	;ADD R3, R3, #8;
-	;LDR R6, [R3,#-4]; R5 = 11;
-	;SUB R7, R6, R1
-	
 	
 	SUB R6, R2, R1;  R6 = 1;
 	STR R6, [R4,#-4];
