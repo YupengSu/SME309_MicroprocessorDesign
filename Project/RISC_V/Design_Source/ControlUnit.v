@@ -117,7 +117,7 @@ module ControlUnit (
                 ImmSrc = 3'd3;
                 MemWrite = funct3 + 3'b1;
                 RegWrite = 2'b00;
-                ALUSrc = 2'b11;
+                ALUSrc = 2'b10;
                 ALUControl = 2'b00;
             end
             7'b1100011: begin

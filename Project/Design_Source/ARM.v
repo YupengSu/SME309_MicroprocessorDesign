@@ -27,16 +27,20 @@ module ARM(
     wire RegWD;
     wire MemWD;
     wire [1:0] FlagWD;
-    wire [1:0] ALUControlD;
+    wire [2:0] ALUControlD;
     wire MemtoRegD;
     wire ALUSrcD;
     wire [1:0] ImmSrcD;
     wire [2:0] RegSrcD;
     wire NoWriteD;
+    wire Carry_usedD;
+    wire Reverse_BD;
+    wire Reverse_SrcD;     
     wire M_StartD;
     wire MCycleOpD;
     wire [3:0] CondD;
     wire [6:0] shControlD;
+     
 
     wire [3:0]  RA1D, RA2D, WA3D;
     wire [31:0] RD1D, RD2D;
@@ -54,10 +58,13 @@ module ARM(
     reg RegWE;
     reg MemWE;
     reg [1:0] FlagWE;
-    reg [1:0] ALUControlE;
+    reg [2:0] ALUControlE; 
     reg MemtoRegE;
     reg ALUSrcE;
     reg NoWriteE;
+    reg Carry_usedE;
+    reg Reverse_BE;
+    reg Reverse_SrcE;  
     reg M_StartE;
     reg MCycleOpE;
     reg [3:0] CondE;
@@ -70,11 +77,13 @@ module ARM(
     wire PCSrcE;
     wire RegWriteE;
     wire MemWriteE;
+    wire C;
 
     wire [1:0] ShE;
     wire [4:0] Shamt5E;
     wire [31:0] ShInE;
     wire [31:0] ShOutE;
+    wire [31:0] SrcAE_pre, SrcBE_pre;
     wire [31:0] SrcAE, SrcBE;
 
     wire [31:0] ALUResultE;
@@ -177,7 +186,10 @@ module ARM(
         .FlagW(FlagWD),
         .NoWrite(NoWriteD),
         .M_Start(M_StartD),
-        .MCycleOp(MCycleOpD)
+        .MCycleOp(MCycleOpD),
+        .Carry_used(Carry_usedD),
+        .Reverse_B(Reverse_BD),
+        .Reverse_Src(Reverse_SrcD)  
     );
 
     //MC04. Add Datapath
@@ -224,6 +236,9 @@ module ARM(
             MemtoRegE <= 0;
             ALUSrcE <= 0;
             NoWriteE <= 0;
+            Carry_usedE <= 0;
+            Reverse_BE <= 0;
+            Reverse_SrcE <= 0;  
             M_StartE <= 0;
             MCycleOpE <= 0;
 
@@ -248,6 +263,9 @@ module ARM(
             MemtoRegE <= MemtoRegE;
             ALUSrcE <= ALUSrcE;
             NoWriteE <= NoWriteE;
+            Carry_usedE <= Carry_usedE;
+            Reverse_BE <= Reverse_BE;
+            Reverse_SrcE <= Reverse_SrcE;  
             M_StartE <= M_StartE;
             MCycleOpE <= MCycleOpE;
 
@@ -272,6 +290,9 @@ module ARM(
             MemtoRegE <= MemtoRegD;
             ALUSrcE <= ALUSrcD;
             NoWriteE <= NoWriteD;
+            Carry_usedE <= Carry_usedD;
+            Reverse_BE <= Reverse_BD;
+            Reverse_SrcE <= Reverse_SrcD;  
             M_StartE <= M_StartD;
             MCycleOpE <= MCycleOpD;
 
@@ -302,7 +323,8 @@ module ARM(
 
         .PCSrc(PCSrcE),
         .RegWrite(RegWriteE),
-        .MemWrite(MemWriteE)
+        .MemWrite(MemWriteE),
+        .C(C)
     );
 
     assign ShE = shControlE[1:0];
@@ -318,8 +340,10 @@ module ARM(
         .ShOut(ShOutE)
     );
 
-    assign SrcAE = ForwardAE[1]? OpResultM: (ForwardAE[0]? ResultW: RD1E);
-    assign SrcBE = ALUSrcE? ExtImmE: ShOutE;
+    assign SrcAE_pre = ForwardAE[1]? OpResultM: (ForwardAE[0]? ResultW: RD1E);
+    assign SrcBE_pre = ALUSrcE? ExtImmE: ShOutE;
+    assign SrcAE = (Reverse_SrcE)?SrcBE_pre:SrcAE_pre;
+    assign SrcBE = (Reverse_SrcE)?SrcAE_pre:SrcBE_pre;
 
     ALU ALU1 (
         .Src_A(SrcAE),
@@ -327,7 +351,11 @@ module ARM(
         .ALUControl(ALUControlE),
 
         .ALUResult(ALUResultE),
-        .ALUFlags(ALUFlagsE)
+        .ALUFlags(ALUFlagsE),
+        
+        .Carry(C),
+        .Carry_used(Carry_usedE),
+        .Reverse_B(Reverse_BE)
     );
 
     // USE MCycle or FPUnit

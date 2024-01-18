@@ -8,11 +8,14 @@ module Decoder(
     output reg ALUSrc,
     output reg [1:0] ImmSrc,
     output reg [2:0] RegSrc,
-    output reg [1:0] ALUControl,
+    output reg [2:0] ALUControl,
     output reg [1:0] FlagW,
     output reg NoWrite,
     output reg M_Start,
-    output reg MCycleOp
+    output reg MCycleOp,
+    output reg Carry_used,
+    output reg Reverse_B,
+    output reg Reverse_Src    
 ); 
     reg [1:0] ALUOp;
     reg [1:0] MCOp;
@@ -72,22 +75,56 @@ module Decoder(
     // *************************************************
     always @(*) begin
         casex({ALUOp[1:0],Funct[4:0]})
-            // Not DP
-            7'b00xxxxx: {ALUControl,FlagW,NoWrite} = 5'b00000; // Pos Offset
-            7'b01xxxxx: {ALUControl,FlagW,NoWrite} = 5'b01000; // Neg Offset
-            // DP
-            7'b1101000: {ALUControl,FlagW,NoWrite} = 5'b00000;
-            7'b1101001: {ALUControl,FlagW,NoWrite} = 5'b00110;
-            7'b1100100: {ALUControl,FlagW,NoWrite} = 5'b01000;
-            7'b1100101: {ALUControl,FlagW,NoWrite} = 5'b01110;
-            7'b1100000: {ALUControl,FlagW,NoWrite} = 5'b10000;
-            7'b1100001: {ALUControl,FlagW,NoWrite} = 5'b10100;
-            7'b1111000: {ALUControl,FlagW,NoWrite} = 5'b11000;
-            7'b1111001: {ALUControl,FlagW,NoWrite} = 5'b11100;
-            // CMP/CMN
-            7'b1110101: {ALUControl,FlagW,NoWrite} = 5'b01111;
-            7'b1110111: {ALUControl,FlagW,NoWrite} = 5'b00111;
-            default:    {ALUControl,FlagW,NoWrite} = 5'b00000;
+            //NOT DP instruction
+            7'b00_xxxx_x: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b000_00_0_0_0_0;
+            7'b01_xxxx_x: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_00_0_0_0_0;
+
+            // DP instruction
+            // And
+            7'b11_0000_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b010_00_0_0_0_0;
+            7'b11_0000_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b010_10_0_0_0_0;   
+            // EOR
+            7'b11_0001_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b100_00_0_0_0_0;
+            7'b11_0001_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b100_10_0_0_0_0;   
+            // SUB
+            7'b11_0010_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_00_0_0_0_0;
+            7'b11_0010_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_11_0_0_0_0;   
+            // RSB
+            7'b11_0011_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_00_0_0_0_1;
+            7'b11_0011_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_11_0_0_0_1;   
+            // ADD
+            7'b11_0100_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b000_00_0_0_0_0;
+            7'b11_0100_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b000_11_0_0_0_0;   
+            // ADC
+            7'b11_0101_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b000_00_0_1_0_0;
+            7'b11_0101_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b000_11_0_1_0_0;   
+            // SBC
+            7'b11_0110_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_00_0_1_0_0;
+            7'b11_0110_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_11_0_1_0_0;   
+            // RSC
+            7'b11_0111_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_00_0_1_0_1;
+            7'b11_0111_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_11_0_1_0_1;   
+            // TST(S always be 1)
+            7'b11_1000_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b010_10_1_0_0_0;   
+            // TEQ(S always be 1)
+            7'b11_1001_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b100_10_1_0_0_0;  
+            // CMP(S always be 1)
+            7'b11_1010_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b001_11_1_0_0_0;   
+            // CMN(S always be 1)
+            7'b11_1011_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b000_11_1_0_0_0;   
+            // ORR
+            7'b11_1100_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b011_00_0_0_0_0;
+            7'b11_1100_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b011_10_0_0_0_0;   
+            // MOV
+            7'b11_1101_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b101_00_0_0_0_0;
+            7'b11_1101_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b101_10_0_0_0_0;   
+            // BIC
+            7'b11_1110_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b010_00_0_0_1_0;
+            7'b11_1110_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b010_10_0_0_1_0;   
+            // MVN
+            7'b11_1111_0: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b101_00_0_0_1_0;
+            7'b11_1111_1: {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b101_10_0_0_1_0;   
+            default:    {ALUControl, FlagW, NoWrite, Carry_used, Reverse_B, Reverse_Src} = 9'b000_00_0_0_0_0;
         endcase
     end
 

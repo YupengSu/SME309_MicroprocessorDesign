@@ -51,7 +51,7 @@ module Comparator (
             3'b110: begin
                 ComResult = less_than_u;
             end
-            3'b110: begin
+            3'b111: begin
                 ComResult = ~less_than_u;
             end
             default: begin
