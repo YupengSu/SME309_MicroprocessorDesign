@@ -19,7 +19,7 @@
       <NameColumnWidth column_width="168"></NameColumnWidth>
       <ValueColumnWidth column_width="81"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="9" />
+   <WVObjectSize size="7" />
    <wvobject fp_name="/Wrapper_tb/DIP" type="array">
       <obj_property name="ElementShortName">DIP[6:0]</obj_property>
       <obj_property name="ObjectShortName">DIP[6:0]</obj_property>
@@ -45,16 +45,8 @@
       <obj_property name="ObjectShortName">RegBank[0:14][31:0]</obj_property>
       <obj_property name="isExpanded"></obj_property>
    </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/FlushD" type="logic">
-      <obj_property name="ElementShortName">FlushD</obj_property>
-      <obj_property name="ObjectShortName">FlushD</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/FlushE" type="logic">
-      <obj_property name="ElementShortName">FlushE</obj_property>
-      <obj_property name="ObjectShortName">FlushE</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/PCSrcE" type="logic">
-      <obj_property name="ElementShortName">PCSrcE</obj_property>
-      <obj_property name="ObjectShortName">PCSrcE</obj_property>
+   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/ForwardM" type="logic">
+      <obj_property name="ElementShortName">ForwardM</obj_property>
+      <obj_property name="ObjectShortName">ForwardM</obj_property>
    </wvobject>
 </wave_config>

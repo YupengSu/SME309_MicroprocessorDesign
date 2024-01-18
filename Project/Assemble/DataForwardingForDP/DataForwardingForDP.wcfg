@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="585383503fs"></ZoomEndTime>
-      <Cursor1Time time="170000000fs"></Cursor1Time>
+      <ZoomEndTime time="1000000000fs"></ZoomEndTime>
+      <Cursor1Time time="543478000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="168"></NameColumnWidth>
-      <ValueColumnWidth column_width="85"></ValueColumnWidth>
+      <ValueColumnWidth column_width="81"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="9" />
+   <WVObjectSize size="6" />
    <wvobject fp_name="/Wrapper_tb/DIP" type="array">
       <obj_property name="ElementShortName">DIP[6:0]</obj_property>
       <obj_property name="ObjectShortName">DIP[6:0]</obj_property>
@@ -44,17 +44,5 @@
       <obj_property name="ElementShortName">RegBank[0:14][31:0]</obj_property>
       <obj_property name="ObjectShortName">RegBank[0:14][31:0]</obj_property>
       <obj_property name="isExpanded"></obj_property>
-   </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/Idrstall" type="logic">
-      <obj_property name="ElementShortName">Idrstall</obj_property>
-      <obj_property name="ObjectShortName">Idrstall</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/StallF" type="logic">
-      <obj_property name="ElementShortName">StallF</obj_property>
-      <obj_property name="ObjectShortName">StallF</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/StallD" type="logic">
-      <obj_property name="ElementShortName">StallD</obj_property>
-      <obj_property name="ObjectShortName">StallD</obj_property>
    </wvobject>
 </wave_config>

@@ -12,8 +12,8 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="1000000000fs"></ZoomEndTime>
-      <Cursor1Time time="1000000000fs"></Cursor1Time>
+      <ZoomEndTime time="1000000001fs"></ZoomEndTime>
+      <Cursor1Time time="405483000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="168"></NameColumnWidth>
@@ -45,16 +45,16 @@
       <obj_property name="ObjectShortName">RegBank[0:14][31:0]</obj_property>
       <obj_property name="isExpanded"></obj_property>
    </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/FlushD" type="logic">
-      <obj_property name="ElementShortName">FlushD</obj_property>
-      <obj_property name="ObjectShortName">FlushD</obj_property>
+   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/StallF" type="logic">
+      <obj_property name="ElementShortName">StallF</obj_property>
+      <obj_property name="ObjectShortName">StallF</obj_property>
+   </wvobject>
+   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/StallD" type="logic">
+      <obj_property name="ElementShortName">StallD</obj_property>
+      <obj_property name="ObjectShortName">StallD</obj_property>
    </wvobject>
    <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/FlushE" type="logic">
       <obj_property name="ElementShortName">FlushE</obj_property>
       <obj_property name="ObjectShortName">FlushE</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Wrapper_tb/wrapper1/ARM1/HazardUnit1/PCSrcE" type="logic">
-      <obj_property name="ElementShortName">PCSrcE</obj_property>
-      <obj_property name="ObjectShortName">PCSrcE</obj_property>
    </wvobject>
 </wave_config>
