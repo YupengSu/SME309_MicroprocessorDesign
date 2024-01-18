@@ -64,7 +64,7 @@ end
 // Data (Constant) Memory
 //----------------------------------------------------------------
 initial begin
-          DATA_CONST_MEM[0] = 32'h00000810; 
+			DATA_CONST_MEM[0] = 32'h00000810; 
 			DATA_CONST_MEM[1] = 32'h00000820; 
 			DATA_CONST_MEM[2] = 32'h00000830; 
 			DATA_CONST_MEM[3] = 32'h00000005; 
