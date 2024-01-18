@@ -602,13 +602,89 @@ Additionally, you should show the design ideas (such as “How to deal with Not 
 
 #### Test & Simulation:
 
-1. Test for single float addition (**FADD**)
+The assembly instructions are as below:	
 
-   
+```assembly
+LDR R1, constant4;
+LDR R2, constant5;
+LDR R3, constant6;
+LDR R4, constant7;
+	
+MUL R5, R3, R2;
+MUL R6, R3, R4;
+MUL R7, R1, R3;
+	
+DIV R8, R4, R3;
 
-2. Test for single float multiplication (**FMUL**)
+addr1
+		DCD 0x00000810;
+addr2 	
+		DCD 0x00000820;
+addr3
+		DCD 0x00000830;
+constant1
+		DCD 0x00000005; 
+constant2
+		DCD 0x00000006;
+constant3 
+		DCD 0x00000003;			
+constant4 
+		DCD 0x42400000;48.0
+constant5 
+		DCD 0x40A00000;5.0
+constant6
+		DCD 0x3FA66666;1.3
+constant7
+		DCD 0x40266666;2.6		
+number0
+		DCD 0x00000000;
 
-Test your design by writing an assembly program yourself, which should contain all these instructions. 
+```
+
+​	The simulation waveform is
+
+![image-20240118005755832](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240118005755832.png)
+
+The first three "MUL" instructions are Single Float Addition. The last "DIV" instruction is Single Float Multiplication. The result of the waveform is consistent with the  Calculation results.
+
+When there exist special cases, such as $NaN, \infin, -\infin, 0$, the CPU will process this like below:
+
+The assembly instructions:
+
+```assembly
+LDR R1, constant4;
+LDR R2, constant5;
+LDR R3, constant6;
+LDR R4, constant7;
+LDR R5, constant8;
+		
+MUL R6, R1, R2;
+MUL R7, R1, R3;
+MUL R8, R1, R4;
+MUL R9, R1, R5;
+	
+DIV R6, R1, R2;
+DIV R7, R1, R3;
+DIV R8, R1, R4;
+DIV R9, R1, R5;
+
+constant4 
+		DCD 0x3FA66666;1.3
+constant5 
+		DCD 0x00000000;0.0
+constant6
+		DCD 0x7F800000;infinite
+constant7
+		DCD 0xFF800000;Neg infinite
+constant8
+		DCD 0xFFFFFFFF;NaN
+```
+
+The simulation waveform is
+
+![image-20240118113230336](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240118113230336.png)
+
+From the waveform we can see that the processor deal with special cases according to the Arm manual.
 
 ### 7. RISC-V ISA 
 
