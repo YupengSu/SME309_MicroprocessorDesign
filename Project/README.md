@@ -515,6 +515,19 @@ Add a Floating processing unit (FPU) in your pipelined ARM CPU to support simple
 
 Additionally, you should show the design ideas (such as “How to deal with Not a Number(NaN) in float?”) and the details of your design in your report.
 
+FPU is a 8-state state machine. According to the caculations of floating point numbers, we designed such a state mechine.
+
+|State|Description|Next State|
+|-----|-----|-----|
+|IDLE|Wait for the FP_Start signal to start calculation.|CHECK (when calculation starts)|
+|CHECK|Check NaN conditions and the type of calculation.|IDLE((a) both numbers are NaN. (b) one of the numbers is NaN. (c) one of the numbers is 0); FADD_MATCH(except for the conditions of IDLE, FPUnitOp_in = 0); FMUL_CALCULATE(except for the conditions of IDLE, FPUnitOp_in = 1)|
+|FADD_MATCH|Compare exponents and shift smaller mantissa if necessary.|IDLE(the difference between the exponents of the two float numbers is larger than or equal to 23); FADD_CALCULATE(the difference between the exponents of the two float numbers is less than 23)|
+|FADD_CALCULATE|Add mantissas.|IDLE(the sign of the two numbers are different and the their magnitude are the same); FADD_NORMAL(except for the conditions of IDLE)|
+|FADD_NORMAL|Check the neccssary of mantissa normalize.|IDLE(the sign of the two numbers are different); FADD_LOOP(except for the conditions of IDLE)|
+|FADD_LOOP|Normalize mantissa, adjust exponent if necessary and round result.|IDLE(the left bit of the msb of mantissa of the result is 1); FADD_LOOP(the left bit of the msb of mantissa of the result is not 1)|
+|FMUL_CALCULATE|Single Float Multiplication.|FMUL_NORMAL|
+|FMUL_NORMAL|Check and deal with overflow. |IDLE|
+
 #### Test & Simulation:
 
 The assembly instructions are as below:	
@@ -586,6 +599,11 @@ The simulation waveform is
 
 From the waveform we can see that the processor deal with special cases according to the Arm manual.
 
+Dealing with NaN:
+
+1. If one of the number is NaN, the result will be the NaN number.
+2. If both the numbers are NaN, there are two conditions. The first one is that one of the number is QNaN and the other is SNaN, then the result will be the QNaN transformed from the SNaN number. The second one is that both numbers are SNaN, then the result will be the QNaN transformed from the first SNaN. 
+
 ### 7. RISC-V ISA 
 
 #### Requirement: 
@@ -615,7 +633,7 @@ The ControlUnit has 11 output control signals in total to control the action of 
 |RegWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
 |sign_for_reg|Zreo-extend or msb-extend in reg writing|1-bit|
 |ALUSrc|To control the inputs of ALU.|1-bit|
-|sign|Zreo-extend or msb-extend in extend module|1-bit|
+|sign|Zero-extend or msb-extend in extend module|1-bit|
 |ComControl|To control the output of Comparator according to the instruction.|3-bit|
 |ALUControl|To control the output of ALU according to the instruction.|2-bit|
 |MemWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
