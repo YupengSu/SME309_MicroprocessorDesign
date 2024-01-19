@@ -281,8 +281,6 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
        $$ \text{StallF = StallD = StallE = MDone} $$
 
-     
-
    * When **data dependency** :
 
      ![image-20240115004157030](./Design_Architecture_Figure/image-20240115004157030.png)
@@ -290,7 +288,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      * Case1: Read After Write (R symbols the saved registers in MCycleReg)
        
        $$ \text{RMatch\_12D\_R = (RA1D == WA3R) || (RA2D == WA3R)} $$
-
+   
      * Case2: Write After Write
        
        $$ \text{WMatch\_3D\_R = (WA3D == WA3R)} $$
@@ -483,8 +481,6 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 #### Requirement: 
 
-![image-20231208132513229](./Design_Architecture_Figure/image-20231208132513229.png)
-
 The schematic of a **4-way set associative cache** is shown above. The cache size is **4KB** (256 rows\*4 ways\*4 bytes). The cache uses **write-allocate** and **write-back** scheme. Inserting this cache will further add complexity to the Store and Load instructions. There are 4 situations when accessing the cache:
 
 1. When **read hit**, directly load data from cache to register.
@@ -497,6 +493,35 @@ The schematic of a **4-way set associative cache** is shown above. The cache siz
 **TODO: Yupeng Su** 
 
 ![image-20240119172648872](./Design_Architecture_Figure/image-20240119172648872.png)
+
+1. Use a 6 state machine:
+
+   * `IDLE` : Default state, waiting signal Start.
+
+   * `READ_CACHE` : Read data from cache to CPU, waiting signal ReadReady.
+
+   * `WRITE_CACHE` : Write data from CPU to cache, **add dirty symbol**, waiting signal WriteReady.
+
+   * `WRITE_BACK` : Write data from cache to memory **when block is dirty**, waiting signal MemWriteFinish.
+
+   * `READ_MEM` : Read data from memory to cache, waiting signal MemReadFinish.
+
+   * `WRITE_ALLOCATE` : Allocate data in cache, change the cache data.
+
+2. Four condition can be divide to different state:
+
+   * Read Hit: `IDLE` -> `READ_CACHE` -> `IDLE`.
+   * Read Miss: `IDLE` -> `WRITE_BACK`(optional) -> `READ_MEM` -> `WRITE_ALLOCATE` ->  `READ_CACHE` -> `IDLE`.
+   * Write Hit: `IDLE` -> `WRITE_CACHE` -> `IDLE`.
+   * Write Miss: `IDLE` -> `WRITE_BACK`(optional) -> `READ_MEM` -> `WRITE_ALLOCATE` ->  `WRITE_CACHE` -> `IDLE`.
+
+3. Use FIFO standard to arrange associative cache.
+
+   * Use  `recent` bits for each set, save the block next to the current changed block.
+
+4. Use **Combinational Logic** to Find **Hit** and **Data**, and **Sequential logic** for FSM: 
+
+   ![image-20231208132513229](./assets/image-20231208132513229.png)
 
 #### Test & Simulation:
 
@@ -610,7 +635,7 @@ The whole sturucture of RISC-V we designed is as follows.
 
 ##### Details of each module
 
-###### ControlUnit
+**ControlUnit**
 
 The ControlUnit has 11 output control signals in total to control the action of each module and the data flows.
 
@@ -627,23 +652,23 @@ The ControlUnit has 11 output control signals in total to control the action of 
 |MemWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
 |MemtoReg|To select the source of result.|1-bit|
 
-###### ProgramCounter
+**ProgramCounter**
 
 If PCSrc is 1, the next PC will be next_PC, or the next PC is PC_Plus_4. The next_PC can be either PC+imm or rs1+imm. PC jumps to next_PC only if the PCSrc_out and the output of Comparator are both 1, which is specially designed for jal and jalr instructions.
 
-###### RegisterFile
+**RegisterFile**
 
 Only the write instructions in this RISC-V architecture are differnent from these of ARM. WE3 indicates the types of writing: 0b00 for no write, 0b01 for byte write, 0b10 for half-word write and 0b11 for word write. The same design is also in memory writing. The signal sign_for_reg indicates the extension type of writing when RF is not writing a complete word: 1 for msb_extend and 0 for zreo extend.
 
-###### Extend
+**Extend**
 
 In the required insyructions set, there are 4 type of instructions having immediate number. Except for I-type instructions, the extensions are all msb-extend. ImmSrc indicates the type of instruction. The signal sign indiactes the type of extension. Only when the core is excuating sltu and sltis instructions, the module excuates zero extension.
 
-###### ALU
+**ALU**
 
 ALU takes the jobs of add, sub in all instructions and the comparsions in I-type instructions.
 
-###### Comparator
+**Comparator**
 
 Comparator takes jobs of comparsions in the B-type instruction to check whether the conditions meet the requirement in brench instructions. According the current instruction, if the brench should be taken, the output of the module will be 1.
 
