@@ -7,7 +7,8 @@
 	LDR R2, constant2; R2=6
 	LDR R3, addr1; 810
 	LDR R4, addr2; 820
-	LDR R12,addr3; ffffffff
+	LDR R11 addr3;
+	LDR R12,addr4; ffffffff
 	
 	AND R5, R1, #1;   R5=1
 	AND R6, R2, R3;   R6=0
@@ -17,7 +18,7 @@
 	MOV R5, #0;       R5=0
 	
 	ORR R6, R1, R1;   R6=5
-	CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
+	CMN R2, R11;      R2=6 N=0 Z=0 C=1 V=0
 	TST R1, #0;       R1=5 N=0 Z=1
 	TEQ R1, #0;       R1=5 N=0 Z=0	
 	RSB R7, R7, #7;   R7=4
@@ -47,6 +48,8 @@ addr2
 		DCD 0x00000820;
 addr3
 		DCD 0xffffffff;
+addr4
+		DCD 0x00000830;
 constant1
 		DCD 0x00000005; 
 constant2
