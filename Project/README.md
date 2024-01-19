@@ -608,7 +608,7 @@ The whole sturucture of RISC-V we designed is as follows.
 
 The ControlUnit has 11 output control signals in total to control the action of each module and the data flows.
 
-|Signal|Description||
+|Signal|Description|Length|
 |-----|-----|-----|
 |PCSrc_out|To control the next PC.|1-bit|
 |ImmSrc|To control the method of extension.|3-bit|
