@@ -359,7 +359,7 @@ module ARM(
     );
 
     // USE MCycle or FPUnit
- MCycle MCycle1 (
+    MCycle MCycle1 (
         .CLK(CLK),
         .RESET(Reset),
         .Start(M_StartE),

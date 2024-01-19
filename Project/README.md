@@ -8,7 +8,7 @@
 >
 > There is no fixed structure for the report. However, to distinguish the understanding level of each group, you should try to show your critical thinking in hardware design and details of each task clearly in your report. By the way, your report should be well-formatted. Division of labor and contribution percentage for each group member should be included at the end of the report. 
 >
->  **Submitted Files:** 
+> **Submitted Files:** 
 >
 > 1. Report pdf (including waveform screenshot for each task, on-board result);
 > 2. Source code ZIP (including RTL files, assembly code files, test instructions, and so on);
@@ -17,6 +17,8 @@
 > 5. other files…
 >
 >  **DDL:** 2024/01/19 23:55 PM
+>
+> **Contribution:**  Equally Divide!
 
 ### 1. Implement a five-stage pipeline processor with Hazard Unit. 
 
@@ -185,7 +187,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
    - The on-board test figure is
 
      ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test2.jpg) 
-     
+   
 5. Test for multiple DP instructions
 
    - The assembly instructions are as below:
@@ -494,7 +496,7 @@ The schematic of a **4-way set associative cache** is shown above. The cache siz
 
 **TODO: Yupeng Su** 
 
-![image-20240119172648872](/Users/suyupeng/Documents/GitHub/SME309_MicroprocessorDesign/Project/assets/image-20240119172648872.png)
+![image-20240119172648872](./Design_Architecture_Figure/image-20240119172648872.png)
 
 #### Test & Simulation:
 
@@ -516,6 +518,10 @@ Add a Floating processing unit (FPU) in your pipelined ARM CPU to support simple
 Additionally, you should show the design ideas (such as “How to deal with Not a Number(NaN) in float?”) and the details of your design in your report.
 
 #### Test & Simulation:
+
+**IMPORTANT**: You should remove the FPUnit comment, and comment out MCycle in ARM.v.
+
+![image-20240119224351127](./Design_Architecture_Figure/image-20240119224351127.png)
 
 The assembly instructions are as below:	
 
@@ -608,7 +614,7 @@ The whole sturucture of RISC-V we designed is as follows.
 
 The ControlUnit has 11 output control signals in total to control the action of each module and the data flows.
 
-|Signal|Description||
+|Signal|Description|Length|
 |-----|-----|-----|
 |PCSrc_out|To control the next PC.|1-bit|
 |ImmSrc|To control the method of extension.|3-bit|
