@@ -708,6 +708,10 @@ The simulation waveform is
 
 ![image-20240119145230092](./Simulation_Waveform_Figure/RISC-V/Result.png)
 
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test8.jpg) 
+
 ### 8. Advanced Processor (Bonus)
 
 #### Requirement: 
