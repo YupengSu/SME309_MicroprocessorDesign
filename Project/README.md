@@ -494,6 +494,8 @@ The schematic of a **4-way set associative cache** is shown above. The cache siz
 
 **TODO: Yupeng Su** 
 
+![image-20240119172648872](/Users/suyupeng/Documents/GitHub/SME309_MicroprocessorDesign/Project/assets/image-20240119172648872.png)
+
 #### Test & Simulation:
 
 Create your testbench and assembly code to verify these functions in the **simulation waveform**.
