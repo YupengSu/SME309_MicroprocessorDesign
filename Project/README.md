@@ -74,6 +74,12 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
    ADD R7, R1, R5
    SUB R8, R5, R2
    
+   addr1
+   		DCD 0x00000810;
+   addr2 	
+   		DCD 0x00000820;
+   addr3
+   		DCD 0x00000830;
    constant1
    		DCD 0x00000005; 
    constant2
@@ -84,7 +90,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240116112711171](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116112711171.png)
+     ![image-20240116112711171](./Simulation_Waveform_Figure/Hazards/DataForwardingForDP.png)
 
      From the change of ForwardAE and ForwardBE, we can see that DataForwarding of DP is valid.
 
@@ -108,7 +114,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240117193740548](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117193740548.png)
+     ![image-20240117193740548](./Simulation_Waveform_Figure/Hazards/MemMemCopy.png)
      
      When memory-memory copy happens, ForwardM should be 1, which is consistent with the waveform. Therefore,  the code implementation is valid.
 
@@ -129,31 +135,14 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      ADD R3, R3, #8;
      LDR R6, [R3,#-4]; R6 = 11;
      SUB R7, R6, R1
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
-     
-     
      ```
-
+     
    - The simulation waveform is 
-
-     ![image-20240116120722907](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116120722907.png)
-
+   
+     ![image-20240116120722907](./Simulation_Waveform_Figure/Hazards/LoadAndUse.png)
+   
      When Load and Use happens, Idrstall = StallF = StallD = 1. And from the waveform, we can see there is one more cycle between LDR instruction and SUB instruction.
-
+   
 4. Test for EarlyBTA
 
    - The assembly instructions are as below:
@@ -173,29 +162,14 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      SUB R8, R2, R1
      ADD R10, R9, R1
      ADD R11, R2, R1
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
      ```
-
+     
    - The simulation waveform is 
-
-     ![image-20240116115351079](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116115351079.png)
-
+   
+     ![image-20240116115351079](./Simulation_Waveform_Figure/Hazards/EarlyBTA.png)
+   
      When EarlyBTA happens, PCSrc = FlushD = FlushE = 1. And from the waveform, we can see the branch instruction really happens in advance.
-
+   
 5. Test for multiple DP instructions
 
    - The assembly instructions are as below:
@@ -221,19 +195,18 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      MULEQ R10,R1,R8; R10=15;
      ADDS R10,R10,R7; R10 =66+15=81,flags are 0
      
-     ;The divide instructions are completed in the wrapper directly.
-     ADD R3,R3,#0;;DIV R7,R7,R8; R7=66/3=22
-     ADD R3,R3,#0;;DIV R7,R7,R1; R7=22/5=4
-     ADD R3,R3,#0;;DIVEQ R7,R2,R8; not execute, R7 = 4
+     DIV R7,R7,R8; R7=66/3=22
+     DIV R7,R7,R1; R7=22/5=4
+     DIVEQ R7,R2,R8; not execute, R7 = 4
      ADDS R3,R3,#0; SET Z FLAG = 1
-     ADD R3,R3,#0;;DIVEQ R11,R2,R8;R11=6/3=2;
+     DIVEQ R11,R2,R8;R11=6/3=2;
      ADD R11,R11,R7; R11=2+4=6
      ADD R11,R11,R10;R11=81+6=87=0X0000 0057
      ```
-
+     
    - The simulation waveform is
-
-     ![image-20240117164238833](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117164238833.png)
+   
+     ![image-20240117164238833](./Simulation_Waveform_Figure/Hazards/MultipleDPInstr.png)
      
      According to the assemble instructions, the final result of SEVENSEG is 57 in  hexadecimal, which is consistent with the waveform.
 
@@ -276,7 +249,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **no data dependency**:
 
-     ![image-20240115003515808](.//Design_Architecture_Figure/image-20240115003515808.png)
+     ![image-20240115003515808](./Design_Architecture_Figure/image-20240115003515808.png)
 
      * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result)
 
@@ -290,7 +263,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **data dependency** :
 
-     ![image-20240115004157030](.//Design_Architecture_Figure/image-20240115004157030.png)
+     ![image-20240115004157030](./Design_Architecture_Figure/image-20240115004157030.png)
 
      * Case1: Read After Write (R symbols the saved registers in MCycleReg)
        
@@ -326,29 +299,14 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      
      MUL R5, R1, R2
      ADD R6, R2, R9
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
      ```
-
+     
    - The simulation waveform is
-
-     ![image-20240117153940296](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117153940296.png)
+   
+     ![image-20240117153940296](./Simulation_Waveform_Figure/Hazards/NonStalling.png)
      
      Since there is not RAW, there is no stalling. The final result in R5 is 1e in hexadecimal, just like what the waveform shows.
-
+   
 2. Test for stalling situation, that is  the target register of the first  multiplication or divide instruction is same as one of the source registers of the next DP instruction.
 
    - The assembly instructions are as below:
@@ -359,26 +317,11 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      
      MUL R5, R1, R2
      ADD R6, R5, R9
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
      ```
-
+     
    - The simulation waveform is
-
-     ![image-20240117160547165](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117160547165.png)
+   
+     ![image-20240117160547165](./Simulation_Waveform_Figure/Hazards/Stalling.png)
      
      Since there exists RAW, there is stall. When stalling happens, FlushE = StallD = StallF = 1, which is consistent with the waveform. Therefore, the stalling situation is achieved successfully.
 
@@ -466,22 +409,9 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 2. Test for **CMN, TST, TEQ, RSB, ADC, CMP, RSC** and **SBC**.
 
-   - The assembly instructions are as below:
+   - The assembly instructions are as below(the former instructions are the same as part 1, which results in R5=0, R6=5, R7=3, R8=0, R9=7):
 
      ```assembly
-      LDR R1, constant1; R1=5
-      LDR R2, constant2; R2=6
-      LDR R3, addr1; 810
-      LDR R4, addr2; 820
-      LDR R12,addr3; 0xffffffff
-      
-      AND R5, R1, #1;   R5=1
-      AND R6, R2, R3;   R6=0
-      EOR R7, R1, R2;   R7=3
-      EOR R8, R1, R1;   R8=0
-      ORR R9, R1, R2;   R9=7
-      MOV R5, #0;       R5=0
-      ORR R6, R1, R1;   R6=5
 
       CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
       TST R1, #0;       R1=5 N=0 Z=1
@@ -491,19 +421,7 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
       CMP R1, #6;       R1=5 N=1 Z=0 C=0 V=0
       RSC R9, R9, #9;   R9=1
       SBC R5, R1, #2;   R5=2
-    
-      addr1
-          DCD 0x00000810;
-      addr2 	
-          DCD 0x00000820;
-      addr3
-          DCD 0xffffffff;
-      constant1
-          DCD 0x00000005; 
-      constant2
-          DCD 0x00000006;
-      constant3 
-          DCD 0x00000003;
+
      ```
 
    - The simulation waveform is
@@ -514,46 +432,13 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 3. Test for **MVN** and **BIC**.
 
-   - The assembly instructions are as below:
+   - The assembly instructions are as below(the former instructions are the same as part 1 and part 2, which results in R5=2, R6=5, R7=4, R8=2, R9=1):
 
      ```assembly
-      LDR R1, constant1; R1=5
-      LDR R2, constant2; R2=6
-      LDR R3, addr1; 810
-      LDR R4, addr2; 820
-      LDR R12,addr3; 0xffffffff
-      
-      AND R5, R1, #1;   R5=1
-      AND R6, R2, R3;   R6=0
-      EOR R7, R1, R2;   R7=3
-      EOR R8, R1, R1;   R8=0
-      ORR R9, R1, R2;   R9=7
-      MOV R5, #0;       R5=0
-      ORR R6, R1, R1;   R6=5
 
-      CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
-      TST R1, #0;       R1=5 N=0 Z=1
-      TEQ R1, #0;       R1=5 N=0 Z=0	
-      RSB R7, R7, #7;   R7=4
-      ADC R8, R8, #1;   R8=2
-      CMP R1, #6;       R1=5 N=1 Z=0 C=0 V=0
-      RSC R9, R9, #9;   R9=1
-      SBC R5, R1, #2;   R5=2
       MVN R6, #0;       R6=0xffffffff
 	  BIC R7, R1, #4;   R7=1
-    
-      addr1
-          DCD 0x00000810;
-      addr2 	
-          DCD 0x00000820;
-      addr3
-          DCD 0xffffffff;
-      constant1
-          DCD 0x00000005; 
-      constant2
-          DCD 0x00000006;
-      constant3 
-          DCD 0x00000003;
+
      ```
 
    - The simulation waveform is
@@ -596,7 +481,7 @@ Add a Floating processing unit (FPU) in your pipelined ARM CPU to support simple
 
 #### Implement Workflow:
 
-**TODO: Guanqi Peng**
+**FINISHED: Guanqi Peng**
 
 Additionally, you should show the design ideas (such as “How to deal with Not a Number(NaN) in float?”) and the details of your design in your report.
 
@@ -615,19 +500,7 @@ MUL R6, R3, R4;
 MUL R7, R1, R3;
 	
 DIV R8, R4, R3;
-
-addr1
-		DCD 0x00000810;
-addr2 	
-		DCD 0x00000820;
-addr3
-		DCD 0x00000830;
-constant1
-		DCD 0x00000005; 
-constant2
-		DCD 0x00000006;
-constant3 
-		DCD 0x00000003;			
+	
 constant4 
 		DCD 0x42400000;48.0
 constant5 
@@ -636,14 +509,11 @@ constant6
 		DCD 0x3FA66666;1.3
 constant7
 		DCD 0x40266666;2.6		
-number0
-		DCD 0x00000000;
-
 ```
 
 The simulation waveform is
 
-![image-20240118005755832](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240118005755832.png)
+![image-20240118005755832](./Simulation_Waveform_Figure/FloatPoint/WithoutSpecial.png)
 
 The first three "MUL" instructions are Single Float Addition. The last "DIV" instruction is Single Float Multiplication. The result of the waveform is consistent with the  Calculation results.
 
@@ -682,7 +552,7 @@ constant8
 
 The simulation waveform is
 
-![image-20240118113230336](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240118113230336.png)
+![image-20240118113230336](./Simulation_Waveform_Figure/FloatPoint/WithSpecial.png)
 
 From the waveform we can see that the processor deal with special cases according to the Arm manual.
 
@@ -698,11 +568,115 @@ Implement a **single-cycle** CPU core to support simple RISC-V ISA. Your design 
 
 #### Implement Workflow:
 
-Additionally, you can try to find the differences between ARM and RISC-V hardware architecture, and explain them in your report.
+##### Structure 
+The whole sturucture of RISC-V we designed is as follows. 
+![Alt text](./Design_Architecture_Figure/RISCV.png)
+
+##### Details of each module
+
+###### ControlUnit
+
+The ControlUnit has 11 output control signals in total to control the action of each module and the data flows.
+
+|Signal|Description||
+|-----|-----|-----|
+|PCSrc_out|To control the next PC.|1-bit|
+|ImmSrc|To control the method of extension.|3-bit|
+|RegWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
+|sign_for_reg|Zreo-extend or msb-extend in reg writing|1-bit|
+|ALUSrc|To control the inputs of ALU.|1-bit|
+|sign|Zreo-extend or msb-extend in extend module|1-bit|
+|ComControl|To control the output of Comparator according to the instruction.|3-bit|
+|ALUControl|To control the output of ALU according to the instruction.|2-bit|
+|MemWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
+|MemtoReg|To select the source of result.|1-bit|
+
+###### ProgramCounter
+
+If PCSrc is 1, the next PC will be next_PC, or the next PC is PC_Plus_4. The next_PC can be either PC+imm or rs1+imm. PC jumps to next_PC only if the PCSrc_out and the output of Comparator are both 1, which is specially designed for jal and jalr instructions.
+
+###### RegisterFile
+
+Only the write instructions in this RISC-V architecture are differnent from these of ARM. WE3 indicates the types of writing: 0b00 for no write, 0b01 for byte write, 0b10 for half-word write and 0b11 for word write. The same design is also in memory writing. The signal sign_for_reg indicates the extension type of writing when RF is not writing a complete word: 1 for msb_extend and 0 for zreo extend.
+
+###### Extend
+
+In the required insyructions set, there are 4 type of instructions having immediate number. Except for I-type instructions, the extensions are all msb-extend. ImmSrc indicates the type of instruction. The signal sign indiactes the type of extension. Only when the core is excuating sltu and sltis instructions, the module excuates zero extension.
+
+###### ALU
+
+ALU takes the jobs of add, sub in all instructions and the comparsions in I-type instructions.
+
+###### Comparator
+
+Comparator takes jobs of comparsions in the B-type instruction to check whether the conditions meet the requirement in brench instructions. According the current instruction, if the brench should be taken, the output of the module will be 1.
 
 #### Test & Simulation:
 
-Test your design by writing an assembly program yourself, which should contain all kinds of these instructions. 
+The assembly instructions are as below:
+
+```assembly
+LDR R0, constant1;
+LDR R1, constant2;
+
+ADD R2, R1, R0;
+SUB R3, R2, R1;
+SLT R4, R1, R2;
+SLTU R5, R2, R1;
+ADDI R6, R0, #11;
+SLTI R7, R6, #19;
+SLTIU R8, R6, #15;
+LB R9, R4, #511;
+ADDI R12, R10, #4;
+LW R13, R12, #511;
+LBU R14, R12, #511;
+LHU R15, R12, #511;
+SB R4, R15, #2047;
+SH R13, R10, #2047;
+SW R13, R12, #2047;
+
+ADDI R16, R0, #-4;
+ADDI R16, R16, #1;
+BNE R0, R16, #-4;
+
+ADDI R17, R0, -4;
+BEQ R0, R17, #12;
+ADDI R17, R17, #1;
+BEQ R0, R0, #-8;
+
+ADDI R18, R0, #0;
+BLTU R18, R0, #12;
+ADDI R18, R18, #-1;
+BEQ R0, R0, #-8;
+
+ADDI R19, R0, #-1;
+BGEU R19, R0, #12;
+ADDI R19, R19, #1;
+BEQ R0, R0, #-8;
+
+LW R20, R4, #2047;
+BGE R20, R4, #12;
+ADDI R20. R20, #1;
+BEQ R0, R0, #-8;
+
+LW R21, R4, #2047;
+BLT R4, R21, #12;
+ADDI R21, R21, #1;
+BEQ R0, R0, #-8;
+
+JAL R22 #4;
+SW R22, R12, #2047;
+JAL R23 #0;
+
+constant1 
+		DCD 0x00000004;
+constant2 
+		DCD 0x00000008;
+```
+
+The simulation waveform is
+
+![image-20240119145230092](./Simulation_Waveform_Figure/RISC-V/Result.png)
 
 ### 8. Advanced Processor (Bonus)
 
