@@ -611,11 +611,15 @@ constant8
 		DCD 0xFFFFFFFF;NaN
 ```
 
-The simulation waveform is
+   - The simulation waveform is
 
 ![image-20240118113230336](./Simulation_Waveform_Figure/FloatPoint/WithSpecial.png)
 
 From the waveform we can see that the processor deal with special cases according to the Arm manual.
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test9.jpg) 
 
 ### 7. RISC-V ISA 
 
@@ -735,7 +739,7 @@ constant2
 		DCD 0x00000008;
 ```
 
-The simulation waveform is
+   - The simulation waveform is
 
 ![image-20240119145230092](./Simulation_Waveform_Figure/RISC-V/Result.png)
 
