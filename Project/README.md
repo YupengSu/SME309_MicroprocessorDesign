@@ -48,11 +48,11 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    The two works are concluded as the figure shown below:
 
-   ![image-20231208163836001](./assets/image-20231208163836001.png)
+   ![image-20231208163836001](./Design_Architecture_Figure/image-20231208163836001.png)
 
 4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
 
-   ![image-20231213173635471](./assets/image-20231213173635471.png)
+   ![image-20231213173635471](./Design_Architecture_Figure/image-20231213173635471.png)
    
    $$ \text{StallF = StallD = StallE = FulshM = MBusyE} $$
 
@@ -276,7 +276,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **no data dependency**:
 
-     ![image-20240115003515808](./assets/image-20240115003515808.png)
+     ![image-20240115003515808](.//Design_Architecture_Figure/image-20240115003515808.png)
 
      * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result)
 
@@ -290,7 +290,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **data dependency** :
 
-     ![image-20240115004157030](./assets/image-20240115004157030.png)
+     ![image-20240115004157030](.//Design_Architecture_Figure/image-20240115004157030.png)
 
      * Case1: Read After Write (R symbols the saved registers in MCycleReg)
        
@@ -568,7 +568,7 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 #### Requirement: 
 
-![image-20231208132513229](./assets/image-20231208132513229.png)
+![image-20231208132513229](./Design_Architecture_Figure/image-20231208132513229.png)
 
 The schematic of a **4-way set associative cache** is shown above. The cache size is **4KB** (256 rows\*4 ways\*4 bytes). The cache uses **write-allocate** and **write-back** scheme. Inserting this cache will further add complexity to the Store and Load instructions. There are 4 situations when accessing the cache:
 
