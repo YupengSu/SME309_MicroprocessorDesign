@@ -338,11 +338,116 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 #### Implement Workflow:
 
-**TODO: Runsen Zhang, Guanqi Peng**
+**FINISHED: Runsen Zhang**
+
+1. **Add output signal C in CondLogic module:** 
+
+   The original **C** signal, which stands for carry flag, is a part of the four **ALUFlags** that are used to judge whether the flags meet the conditions and the instructions will be executed. It's only used in `CondLogic` module and need no ports as outputs.
+
+   However, when considering implementing all the **16 Data Processing Instructions**, especially **ADC, SBC** and **RSC**, **C** is required in `ALU` module as a part of the arithematic.
+
+2. **Add three output signals  Carry_used, Reverse_B and Reverse_Src in Decoder module :** 
+
+   **Carry_used** is used in `ALU` module to judge whether the **C** signal generated from `CondLogic` module is needed. When the instrucion is one of **ADC,SBC** and **RSC**, **Carry_used** is pulled high.
+   **Reverse_B** is also used in `ALU` module to judge if **Src_B** needs to be reversed. **Src_B** is reversed only with the instruction of **BIC** and **MVN**.
+   **Reverse_Src** is used in `ARM` module to judge if **Src_A** and **Src_B** need to be exchanged. That is, shifter_operand is the input of **Src_A** while Rn is the input of **Src_B**. This situation appears when either **RSB** or **RSC** is executed.
+
+3. **Extend the bitwidth of signal ALUControl from 2 bits to 3 bits:**
+   The original bitwidth of the signal **ALUControl** is 2 bits, which is used as the four conditions of executing And, Or, Add and Sub in `ALU` module respectively.
+   Nevertheless, to implement all **Data Processing Instructions**, other arithmetic such as **EOR** and **MOV** should be considered. **EOR** itself is an arithmetic. **MOV** and **MVN** needs the origin and inverse codes of **Src_B** instead of origin and complement of **Src_B** like **SUB** does. Thus, two more conditions of **ALUControl** are required, leading to the extension of bitwidth.
+   To satisfy the assignment of all the instructions, the amount of the cases of {ALUOp[1:0],Funct[4:0]} increase to 2+12*2+4 = 30.
+   The bitwidth of **ALUControl** needs to be changed in `Decoder`, `ALU` and `ARM` three modules.
+
+4. **Change the computation of ALUResult in ALU module:**
+   As mentioned above, the bitwidth of **ALUControl** is extended, leading to two more conditions and changes in the original ways of computing **ALUResult**.
+   To implement **ADC, SBC** and **RSC**, **C** signal needs to be considered in the original Add and Sub. Two new signals **Carry_trans** and **Carry_fixed** are used to tell whether **C** signal is used and the way it will be used. Another new signal **Src_B_fixed** is used to tell whether **Src_B** needs to be inversed with the signal **Reverse_B** mentioned above.
+   With these changes, the computing of **ALUResult** are divided into the sum of **Src_A,  Src_B** and **Carry_fixed**, the sum of **Src_A**, complement of **Src_B** and complement of **Carry_fixed**, **Src_A** AND **Src_B_fixed**, **Src_A** ORR **Src_B**, **Src_A** EOR **Src_B**, and assigning to **Src_B_fixed** six kinds.
+
+5. **Changes in ARM module:**
+   New signals **C**, **Carry_usedD**, **Reverse_BD**, **Reverse_SrcD** as wires and **Carry_usedE**, **Reverse_BE**, **Reverse_SrcE** as regs are introduced in `ARM` module to satisfy the changes in other modules. Besides, the bitwidth of **ALUControlD** and **ALUControlE** increase from 2 to 3 as mentioned above.
 
 #### Test & Simulation:
 
-Create your testbench and assembly code to verify these functions in the **simulation waveform**.
+1. Test for **AND, ORR, EOR** and **MOV**
+
+   - The assembly instructions are as below:
+
+   ```assembly
+    LDR R1, constant1; R1=5
+    LDR R2, constant2; R2=6
+    LDR R3, addr1; 810
+    LDR R4, addr2; 820
+    LDR R12,addr3; 0xffffffff
+    
+    AND R5, R1, #1;   R5=1
+    AND R6, R2, R3;   R6=0
+    EOR R7, R1, R2;   R7=3
+    EOR R8, R1, R1;   R8=0
+    ORR R9, R1, R2;   R9=7
+    MOV R5, #0;       R5=0
+    ORR R6, R1, R1;   R6=5
+   
+    addr1
+        DCD 0x00000810;
+    addr2 	
+        DCD 0x00000820;
+    addr3
+        DCD 0xffffffff;
+    constant1
+        DCD 0x00000005; 
+    constant2
+        DCD 0x00000006;
+    constant3 
+        DCD 0x00000003;
+   ```
+
+   - The simulation waveform is 
+
+     ![DP_Fig1](./Simulation_Waveform_Figure/DP16/DP_Fig1.png)
+
+     At 110ns, the output of the first AND instruction is shown in R5. At 170ns, the output of the final ORR instruction is shown in R6. Within this period of time, the outputs of the instructions can be seen, which is all correct.
+
+2. Test for **CMN, TST, TEQ, RSB, ADC, CMP, RSC** and **SBC**.
+
+   - The assembly instructions are as below(the former instructions are the same as part 1, which results in R5=0, R6=5, R7=3, R8=0, R9=7):
+
+     ```assembly
+
+      CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
+      TST R1, #0;       R1=5 N=0 Z=1
+      TEQ R1, #0;       R1=5 N=0 Z=0	
+      RSB R7, R7, #7;   R7=4
+      ADC R8, R8, #1;   R8=2
+      CMP R1, #6;       R1=5 N=1 Z=0 C=0 V=0
+      RSC R9, R9, #9;   R9=1
+      SBC R5, R1, #2;   R5=2
+
+     ```
+
+   - The simulation waveform is
+
+     ![DP_Fig2](./Simulation_Waveform_Figure/DP16/DP_Fig2.png)
+     
+     At 165ns, **C**, one of the ALUFlags is pulled up to 1 since **CMN** instruction has come into exection stage. At 175ns, **TST** has come into execution stage and changes the **Z** flag to 1. At 185ns, **TEQ** has come into execution stage and the **Z** flag is pulled down to 0. **TST** and **TEQ** do not change **C** flag and **V** flag, which makes the **C** flag from 165ns to 215ns maintaining to be 1 until **CMP** instruction has come into exectuion stage at 215ns. At 210ns, the output of **RSC** instruction is shown in R7, which is shifter_operand 7 minus the original value of R7 3 equals 4, which is correct in the waveform. Since **C** flag is 1, the Carry signal of the **ADC** instruction is pulled up, resulting in the value of R8 being 0+1+1=2 shown in the waveform at 220ns. **CMP** comes into exection stage at 215ns and changes **C** and **N** flags as mentioned above. Since **C** becomes 0 at 215ns, the NOT Carry signals of **RSC** and **SBC** are pulled up, resulting in the value of R9 being 9-7-1=1 and R5 beign 5-2-1=2 shown in the waveform at 240ns and 250ns.
+
+3. Test for **MVN** and **BIC**.
+
+   - The assembly instructions are as below(the former instructions are the same as part 1 and part 2, which results in R5=2, R6=5, R7=4, R8=2, R9=1):
+
+     ```assembly
+
+      MVN R6, #0;       R6=0xffffffff
+	  BIC R7, R1, #4;   R7=1
+
+     ```
+
+   - The simulation waveform is
+
+     ![DP_Fig3](./Simulation_Waveform_Figure/DP16/DP_Fig3.png)
+     
+     At 260ns, the output of **MVN** instruction is shown in R6. At 270ns, the output of **BIC** instruction is shown in R7. These two waveforms are all correct.
+
+     All in all, all the **16 DP Instructions** can be executed correctly.
 
 ### 4. A 4-way set associative cache between memory and ARM CPU. 
 
@@ -376,7 +481,7 @@ Add a Floating processing unit (FPU) in your pipelined ARM CPU to support simple
 
 #### Implement Workflow:
 
-**TODO: Guanqi Peng**
+**FINISHED: Guanqi Peng**
 
 Additionally, you should show the design ideas (such as “How to deal with Not a Number(NaN) in float?”) and the details of your design in your report.
 
@@ -463,7 +568,48 @@ Implement a **single-cycle** CPU core to support simple RISC-V ISA. Your design 
 
 #### Implement Workflow:
 
-Additionally, you can try to find the differences between ARM and RISC-V hardware architecture, and explain them in your report.
+##### Structure 
+The whole sturucture of RISC-V we designed is as follows. 
+![Alt text](./Design_Architecture_Figure/RISCV.png)
+
+##### Details of each module
+
+###### ControlUnit
+
+The ControlUnit has 11 output control signals in total to control the action of each module and the data flows.
+
+|Signal|Description||
+|-----|-----|-----|
+|PCSrc_out|To control the next PC.|1-bit|
+|ImmSrc|To control the method of extension.|3-bit|
+|RegWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
+|sign_for_reg|Zreo-extend or msb-extend in reg writing|1-bit|
+|ALUSrc|To control the inputs of ALU.|1-bit|
+|sign|Zreo-extend or msb-extend in extend module|1-bit|
+|ComControl|To control the output of Comparator according to the instruction.|3-bit|
+|ALUControl|To control the output of ALU according to the instruction.|2-bit|
+|MemWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
+|MemtoReg|To select the source of result.|1-bit|
+
+###### ProgramCounter
+
+If PCSrc is 1, the next PC will be next_PC, or the next PC is PC_Plus_4. The next_PC can be either PC+imm or rs1+imm. PC jumps to next_PC only if the PCSrc_out and the output of Comparator are both 1, which is specially designed for jal and jalr instructions.
+
+###### RegisterFile
+
+Only the write instructions in this RISC-V architecture are differnent from these of ARM. WE3 indicates the types of writing: 0b00 for no write, 0b01 for byte write, 0b10 for half-word write and 0b11 for word write. The same design is also in memory writing. The signal sign_for_reg indicates the extension type of writing when RF is not writing a complete word: 1 for msb_extend and 0 for zreo extend.
+
+###### Extend
+
+In the required insyructions set, there are 4 type of instructions having immediate number. Except for I-type instructions, the extensions are all msb-extend. ImmSrc indicates the type of instruction. The signal sign indiactes the type of extension. Only when the core is excuating sltu and sltis instructions, the module excuates zero extension.
+
+###### ALU
+
+ALU takes the jobs of add, sub in all instructions and the comparsions in I-type instructions.
+
+###### Comparator
+
+Comparator takes jobs of comparsions in the B-type instruction to check whether the conditions meet the requirement in brench instructions. According the current instruction, if the brench should be taken, the output of the module will be 1.
 
 #### Test & Simulation:
 
