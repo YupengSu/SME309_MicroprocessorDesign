@@ -48,11 +48,11 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    The two works are concluded as the figure shown below:
 
-   ![image-20231208163836001](./assets/image-20231208163836001.png)
+   ![image-20231208163836001](./Design_Architecture_Figure/image-20231208163836001.png)
 
 4. **Change Control Signal `M_busy` Path for Stalling Pipeline (More improvement in 2.)** 
 
-   ![image-20231213173635471](./assets/image-20231213173635471.png)
+   ![image-20231213173635471](./Design_Architecture_Figure/image-20231213173635471.png)
    
    $$ \text{StallF = StallD = StallE = FulshM = MBusyE} $$
 
@@ -276,7 +276,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **no data dependency**:
 
-     ![image-20240115003515808](./assets/image-20240115003515808.png)
+     ![image-20240115003515808](.//Design_Architecture_Figure/image-20240115003515808.png)
 
      * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result)
 
@@ -290,7 +290,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **data dependency** :
 
-     ![image-20240115004157030](./assets/image-20240115004157030.png)
+     ![image-20240115004157030](.//Design_Architecture_Figure/image-20240115004157030.png)
 
      * Case1: Read After Write (R symbols the saved registers in MCycleReg)
        
@@ -395,17 +395,180 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 #### Implement Workflow:
 
-**TODO: Runsen Zhang, Guanqi Peng**
+**FINISHED: Runsen Zhang**
+
+1. **Add output signal C in CondLogic module:** 
+
+   The original **C** signal, which stands for carry flag, is a part of the four **ALUFlags** that are used to judge whether the flags meet the conditions and the instructions will be executed. It's only used in `CondLogic` module and need no ports as outputs.
+
+   However, when considering implementing all the **16 Data Processing Instructions**, especially **ADC, SBC** and **RSC**, **C** is required in `ALU` module as a part of the arithematic.
+
+2. **Add three output signals  Carry_used, Reverse_B and Reverse_Src in Decoder module :** 
+
+   **Carry_used** is used in `ALU` module to judge whether the **C** signal generated from `CondLogic` module is needed. When the instrucion is one of **ADC,SBC** and **RSC**, **Carry_used** is pulled high.
+   **Reverse_B** is also used in `ALU` module to judge if **Src_B** needs to be reversed. **Src_B** is reversed only with the instruction of **BIC** and **MVN**.
+   **Reverse_Src** is used in `ARM` module to judge if **Src_A** and **Src_B** need to be exchanged. That is, shifter_operand is the input of **Src_A** while Rn is the input of **Src_B**. This situation appears when either **RSB** or **RSC** is executed.
+
+3. **Extend the bitwidth of signal ALUControl from 2 bits to 3 bits:**
+   The original bitwidth of the signal **ALUControl** is 2 bits, which is used as the four conditions of executing And, Or, Add and Sub in `ALU` module respectively.
+   Nevertheless, to implement all **Data Processing Instructions**, other arithmetic such as **EOR** and **MOV** should be considered. **EOR** itself is an arithmetic. **MOV** and **MVN** needs the origin and inverse codes of **Src_B** instead of origin and complement of **Src_B** like **SUB** does. Thus, two more conditions of **ALUControl** are required, leading to the extension of bitwidth.
+   To satisfy the assignment of all the instructions, the amount of the cases of {ALUOp[1:0],Funct[4:0]} increase to 2+12*2+4 = 30.
+   The bitwidth of **ALUControl** needs to be changed in `Decoder`, `ALU` and `ARM` three modules.
+
+4. **Change the computation of ALUResult in ALU module:**
+   As mentioned above, the bitwidth of **ALUControl** is extended, leading to two more conditions and changes in the original ways of computing **ALUResult**.
+   To implement **ADC, SBC** and **RSC**, **C** signal needs to be considered in the original Add and Sub. Two new signals **Carry_trans** and **Carry_fixed** are used to tell whether **C** signal is used and the way it will be used. Another new signal **Src_B_fixed** is used to tell whether **Src_B** needs to be inversed with the signal **Reverse_B** mentioned above.
+   With these changes, the computing of **ALUResult** are divided into the sum of **Src_A,  Src_B** and **Carry_fixed**, the sum of **Src_A**, complement of **Src_B** and complement of **Carry_fixed**, **Src_A** AND **Src_B_fixed**, **Src_A** ORR **Src_B**, **Src_A** EOR **Src_B**, and assigning to **Src_B_fixed** six kinds.
+
+5. **Changes in ARM module:**
+   New signals **C**, **Carry_usedD**, **Reverse_BD**, **Reverse_SrcD** as wires and **Carry_usedE**, **Reverse_BE**, **Reverse_SrcE** as regs are introduced in `ARM` module to satisfy the changes in other modules. Besides, the bitwidth of **ALUControlD** and **ALUControlE** increase from 2 to 3 as mentioned above.
 
 #### Test & Simulation:
 
-Create your testbench and assembly code to verify these functions in the **simulation waveform**.
+1. Test for **AND, ORR, EOR** and **MOV**
+
+   - The assembly instructions are as below:
+
+   ```assembly
+    LDR R1, constant1; R1=5
+    LDR R2, constant2; R2=6
+    LDR R3, addr1; 810
+    LDR R4, addr2; 820
+    LDR R12,addr3; 0xffffffff
+    
+    AND R5, R1, #1;   R5=1
+    AND R6, R2, R3;   R6=0
+    EOR R7, R1, R2;   R7=3
+    EOR R8, R1, R1;   R8=0
+    ORR R9, R1, R2;   R9=7
+    MOV R5, #0;       R5=0
+    ORR R6, R1, R1;   R6=5
+   
+    addr1
+        DCD 0x00000810;
+    addr2 	
+        DCD 0x00000820;
+    addr3
+        DCD 0xffffffff;
+    constant1
+        DCD 0x00000005; 
+    constant2
+        DCD 0x00000006;
+    constant3 
+        DCD 0x00000003;
+   ```
+
+   - The simulation waveform is 
+
+     ![DP_Fig1](./Simulation_Waveform_Figure/DP16/DP_Fig1.png)
+
+     At 110ns, the output of the first AND instruction is shown in R5. At 170ns, the output of the final ORR instruction is shown in R6. Within this period of time, the outputs of the instructions can be seen, which is all correct.
+
+2. Test for **CMN, TST, TEQ, RSB, ADC, CMP, RSC** and **SBC**.
+
+   - The assembly instructions are as below:
+
+     ```assembly
+      LDR R1, constant1; R1=5
+      LDR R2, constant2; R2=6
+      LDR R3, addr1; 810
+      LDR R4, addr2; 820
+      LDR R12,addr3; 0xffffffff
+      
+      AND R5, R1, #1;   R5=1
+      AND R6, R2, R3;   R6=0
+      EOR R7, R1, R2;   R7=3
+      EOR R8, R1, R1;   R8=0
+      ORR R9, R1, R2;   R9=7
+      MOV R5, #0;       R5=0
+      ORR R6, R1, R1;   R6=5
+
+      CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
+      TST R1, #0;       R1=5 N=0 Z=1
+      TEQ R1, #0;       R1=5 N=0 Z=0	
+      RSB R7, R7, #7;   R7=4
+      ADC R8, R8, #1;   R8=2
+      CMP R1, #6;       R1=5 N=1 Z=0 C=0 V=0
+      RSC R9, R9, #9;   R9=1
+      SBC R5, R1, #2;   R5=2
+    
+      addr1
+          DCD 0x00000810;
+      addr2 	
+          DCD 0x00000820;
+      addr3
+          DCD 0xffffffff;
+      constant1
+          DCD 0x00000005; 
+      constant2
+          DCD 0x00000006;
+      constant3 
+          DCD 0x00000003;
+     ```
+
+   - The simulation waveform is
+
+     ![DP_Fig2](./Simulation_Waveform_Figure/DP16/DP_Fig2.png)
+     
+     At 165ns, **C**, one of the ALUFlags is pulled up to 1 since **CMN** instruction has come into exection stage. At 175ns, **TST** has come into execution stage and changes the **Z** flag to 1. At 185ns, **TEQ** has come into execution stage and the **Z** flag is pulled down to 0. **TST** and **TEQ** do not change **C** flag and **V** flag, which makes the **C** flag from 165ns to 215ns maintaining to be 1 until **CMP** instruction has come into exectuion stage at 215ns. At 210ns, the output of **RSC** instruction is shown in R7, which is shifter_operand 7 minus the original value of R7 3 equals 4, which is correct in the waveform. Since **C** flag is 1, the Carry signal of the **ADC** instruction is pulled up, resulting in the value of R8 being 0+1+1=2 shown in the waveform at 220ns. **CMP** comes into exection stage at 215ns and changes **C** and **N** flags as mentioned above. Since **C** becomes 0 at 215ns, the NOT Carry signals of **RSC** and **SBC** are pulled up, resulting in the value of R9 being 9-7-1=1 and R5 beign 5-2-1=2 shown in the waveform at 240ns and 250ns.
+
+3. Test for **MVN** and **BIC**.
+
+   - The assembly instructions are as below:
+
+     ```assembly
+      LDR R1, constant1; R1=5
+      LDR R2, constant2; R2=6
+      LDR R3, addr1; 810
+      LDR R4, addr2; 820
+      LDR R12,addr3; 0xffffffff
+      
+      AND R5, R1, #1;   R5=1
+      AND R6, R2, R3;   R6=0
+      EOR R7, R1, R2;   R7=3
+      EOR R8, R1, R1;   R8=0
+      ORR R9, R1, R2;   R9=7
+      MOV R5, #0;       R5=0
+      ORR R6, R1, R1;   R6=5
+
+      CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
+      TST R1, #0;       R1=5 N=0 Z=1
+      TEQ R1, #0;       R1=5 N=0 Z=0	
+      RSB R7, R7, #7;   R7=4
+      ADC R8, R8, #1;   R8=2
+      CMP R1, #6;       R1=5 N=1 Z=0 C=0 V=0
+      RSC R9, R9, #9;   R9=1
+      SBC R5, R1, #2;   R5=2
+      MVN R6, #0;       R6=0xffffffff
+	  BIC R7, R1, #4;   R7=1
+    
+      addr1
+          DCD 0x00000810;
+      addr2 	
+          DCD 0x00000820;
+      addr3
+          DCD 0xffffffff;
+      constant1
+          DCD 0x00000005; 
+      constant2
+          DCD 0x00000006;
+      constant3 
+          DCD 0x00000003;
+     ```
+
+   - The simulation waveform is
+
+     ![DP_Fig3](./Simulation_Waveform_Figure/DP16/DP_Fig3.png)
+     
+     At 260ns, the output of **MVN** instruction is shown in R6. At 270ns, the output of **BIC** instruction is shown in R7. These two waveforms are all correct.
+
+     All in all, all the **16 DP Instructions** can be executed correctly.
 
 ### 4. A 4-way set associative cache between memory and ARM CPU. 
 
 #### Requirement: 
 
-![image-20231208132513229](./assets/image-20231208132513229.png)
+![image-20231208132513229](./Design_Architecture_Figure/image-20231208132513229.png)
 
 The schematic of a **4-way set associative cache** is shown above. The cache size is **4KB** (256 rows\*4 ways\*4 bytes). The cache uses **write-allocate** and **write-back** scheme. Inserting this cache will further add complexity to the Store and Load instructions. There are 4 situations when accessing the cache:
 

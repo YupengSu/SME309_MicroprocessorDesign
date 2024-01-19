@@ -24,12 +24,12 @@ module ALU(
     assign Carry_trans = ALUControl[0] ? !Carry : Carry;
     assign Carry_fixed = Carry_trans & Carry_used;
     assign Src_B_mid = ALUControl[0]? ~Src_B : Src_B;
-    assign Src_B_fixed = Reverse_B ? ~ Src_B : Src_B;
+    assign Src_B_fixed = Reverse_B ? ~Src_B : Src_B;
     
     always @(*) begin
         case(ALUControl)
-            3'b000:  {Cout, ALUResult} = ALUControl[0]?(Src_A + Src_B_mid + 1'b1 + Carry_fixed):(Src_A + Src_B_mid + Carry_fixed);// Add
-            3'b001:  {Cout, ALUResult} = ALUControl[0]?(Src_A + Src_B_mid + 1'b1 - Carry_fixed):(Src_A + Src_B_mid - Carry_fixed);// Sub
+            3'b000:  {Cout, ALUResult} = Src_A + Src_B_mid + Carry_fixed;// Add
+            3'b001:  {Cout, ALUResult} = Src_A + Src_B_mid + 1'b1 - Carry_fixed;// Sub
             3'b010:  ALUResult = Src_A & Src_B_fixed;// And & BIC
             3'b011:  ALUResult = Src_A | Src_B;// ORR
             3'b100:  ALUResult = Src_A ^ Src_B;// EOR
