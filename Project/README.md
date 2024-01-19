@@ -90,9 +90,13 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240116112711171](./Simulation_Waveform_Figure/Hazards/DataForwardingForDP.png)
+     ![on_board_test1.](./Simulation_Waveform_Figure/Hazards/DataForwardingForDP.png)
 
      From the change of ForwardAE and ForwardBE, we can see that DataForwarding of DP is valid.
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test1.jpg) 
 
 2. Test for Memory-memory copy
 
@@ -118,6 +122,10 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      
      When memory-memory copy happens, ForwardM should be 1, which is consistent with the waveform. Therefore,  the code implementation is valid.
 
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test6.jpg) 
+
 3. Test for Load and Use
 
    - The assembly instructions are as below:
@@ -140,8 +148,12 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
    - The simulation waveform is 
    
      ![image-20240116120722907](./Simulation_Waveform_Figure/Hazards/LoadAndUse.png)
-   
+
      When Load and Use happens, Idrstall = StallF = StallD = 1. And from the waveform, we can see there is one more cycle between LDR instruction and SUB instruction.
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test3.jpg) 
    
 4. Test for EarlyBTA
 
@@ -170,6 +182,10 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
    
      When EarlyBTA happens, PCSrc = FlushD = FlushE = 1. And from the waveform, we can see the branch instruction really happens in advance.
    
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test2.jpg) 
+     
 5. Test for multiple DP instructions
 
    - The assembly instructions are as below:
@@ -209,6 +225,10 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      ![image-20240117164238833](./Simulation_Waveform_Figure/Hazards/MultipleDPInstr.png)
      
      According to the assemble instructions, the final result of SEVENSEG is 57 in  hexadecimal, which is consistent with the waveform.
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test7.jpg) 
 
 ### 2. Non-stalling CPU for multi-cycle instructions. 
 
@@ -324,6 +344,10 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      ![image-20240117160547165](./Simulation_Waveform_Figure/Hazards/Stalling.png)
      
      Since there exists RAW, there is stall. When stalling happens, FlushE = StallD = StallF = 1, which is consistent with the waveform. Therefore, the stalling situation is achieved successfully.
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test4.jpg) 
 
 ### 3. Expand the ARM processor to support all the 16 Data Processing Instructions.
 
@@ -448,6 +472,10 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
      At 260ns, the output of **MVN** instruction is shown in R6. At 270ns, the output of **BIC** instruction is shown in R7. These two waveforms are all correct.
 
      All in all, all the **16 DP Instructions** can be executed correctly.
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test5.jpg) 
 
 ### 4. A 4-way set associative cache between memory and ARM CPU. 
 
@@ -580,7 +608,7 @@ The whole sturucture of RISC-V we designed is as follows.
 
 The ControlUnit has 11 output control signals in total to control the action of each module and the data flows.
 
-|Signal|Description||
+|Signal|Description|Length|
 |-----|-----|-----|
 |PCSrc_out|To control the next PC.|1-bit|
 |ImmSrc|To control the method of extension.|3-bit|
