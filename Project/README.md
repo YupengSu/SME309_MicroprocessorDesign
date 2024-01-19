@@ -74,6 +74,12 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
    ADD R7, R1, R5
    SUB R8, R5, R2
    
+   addr1
+   		DCD 0x00000810;
+   addr2 	
+   		DCD 0x00000820;
+   addr3
+   		DCD 0x00000830;
    constant1
    		DCD 0x00000005; 
    constant2
@@ -84,7 +90,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240116112711171](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116112711171.png)
+     ![image-20240116112711171](./Simulation_Waveform_Figure/Hazards/DataForwardingForDP.png)
 
      From the change of ForwardAE and ForwardBE, we can see that DataForwarding of DP is valid.
 
@@ -108,7 +114,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240117193740548](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117193740548.png)
+     ![image-20240117193740548](./Simulation_Waveform_Figure/Hazards/MemMemCopy.png)
      
      When memory-memory copy happens, ForwardM should be 1, which is consistent with the waveform. Therefore,  the code implementation is valid.
 
@@ -129,31 +135,14 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      ADD R3, R3, #8;
      LDR R6, [R3,#-4]; R6 = 11;
      SUB R7, R6, R1
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
-     
-     
      ```
-
+     
    - The simulation waveform is 
-
-     ![image-20240116120722907](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116120722907.png)
-
+   
+     ![image-20240116120722907](./Simulation_Waveform_Figure/Hazards/LoadAndUse.png)
+   
      When Load and Use happens, Idrstall = StallF = StallD = 1. And from the waveform, we can see there is one more cycle between LDR instruction and SUB instruction.
-
+   
 4. Test for EarlyBTA
 
    - The assembly instructions are as below:
@@ -173,29 +162,14 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      SUB R8, R2, R1
      ADD R10, R9, R1
      ADD R11, R2, R1
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
      ```
-
+     
    - The simulation waveform is 
-
-     ![image-20240116115351079](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116115351079.png)
-
+   
+     ![image-20240116115351079](./Simulation_Waveform_Figure/Hazards/EarlyBTA.png)
+   
      When EarlyBTA happens, PCSrc = FlushD = FlushE = 1. And from the waveform, we can see the branch instruction really happens in advance.
-
+   
 5. Test for multiple DP instructions
 
    - The assembly instructions are as below:
@@ -221,19 +195,18 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
      MULEQ R10,R1,R8; R10=15;
      ADDS R10,R10,R7; R10 =66+15=81,flags are 0
      
-     ;The divide instructions are completed in the wrapper directly.
-     ADD R3,R3,#0;;DIV R7,R7,R8; R7=66/3=22
-     ADD R3,R3,#0;;DIV R7,R7,R1; R7=22/5=4
-     ADD R3,R3,#0;;DIVEQ R7,R2,R8; not execute, R7 = 4
+     DIV R7,R7,R8; R7=66/3=22
+     DIV R7,R7,R1; R7=22/5=4
+     DIVEQ R7,R2,R8; not execute, R7 = 4
      ADDS R3,R3,#0; SET Z FLAG = 1
-     ADD R3,R3,#0;;DIVEQ R11,R2,R8;R11=6/3=2;
+     DIVEQ R11,R2,R8;R11=6/3=2;
      ADD R11,R11,R7; R11=2+4=6
      ADD R11,R11,R10;R11=81+6=87=0X0000 0057
      ```
-
+     
    - The simulation waveform is
-
-     ![image-20240117164238833](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117164238833.png)
+   
+     ![image-20240117164238833](./Simulation_Waveform_Figure/Hazards/MultipleDPInstr.png)
      
      According to the assemble instructions, the final result of SEVENSEG is 57 in  hexadecimal, which is consistent with the waveform.
 
@@ -276,7 +249,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **no data dependency**:
 
-     ![image-20240115003515808](.//Design_Architecture_Figure/image-20240115003515808.png)
+     ![image-20240115003515808](./Design_Architecture_Figure/image-20240115003515808.png)
 
      * As **M_Start** posedge, **save signals to registers** and **flush M stage** (Waiting result)
 
@@ -290,7 +263,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    * When **data dependency** :
 
-     ![image-20240115004157030](.//Design_Architecture_Figure/image-20240115004157030.png)
+     ![image-20240115004157030](./Design_Architecture_Figure/image-20240115004157030.png)
 
      * Case1: Read After Write (R symbols the saved registers in MCycleReg)
        
@@ -326,29 +299,14 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      
      MUL R5, R1, R2
      ADD R6, R2, R9
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
      ```
-
+     
    - The simulation waveform is
-
-     ![image-20240117153940296](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117153940296.png)
+   
+     ![image-20240117153940296](./Simulation_Waveform_Figure/Hazards/NonStalling.png)
      
      Since there is not RAW, there is no stalling. The final result in R5 is 1e in hexadecimal, just like what the waveform shows.
-
+   
 2. Test for stalling situation, that is  the target register of the first  multiplication or divide instruction is same as one of the source registers of the next DP instruction.
 
    - The assembly instructions are as below:
@@ -359,26 +317,11 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      
      MUL R5, R1, R2
      ADD R6, R5, R9
-     
-     addr1
-     		DCD 0x00000810;
-     addr2 	
-     		DCD 0x00000820;
-     addr3
-     		DCD 0x00000830;
-     constant1
-     		DCD 0x00000005; 
-     constant2
-     		DCD 0x00000006;
-     constant3 
-     		DCD 0x00000003;
-     number0
-     		DCD 0x00000000;
      ```
-
+     
    - The simulation waveform is
-
-     ![image-20240117160547165](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117160547165.png)
+   
+     ![image-20240117160547165](./Simulation_Waveform_Figure/Hazards/Stalling.png)
      
      Since there exists RAW, there is stall. When stalling happens, FlushE = StallD = StallF = 1, which is consistent with the waveform. Therefore, the stalling situation is achieved successfully.
 
@@ -395,174 +338,11 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 #### Implement Workflow:
 
-**FINISHED: Runsen Zhang**
-
-1. **Add output signal C in CondLogic module:** 
-
-   The original **C** signal, which stands for carry flag, is a part of the four **ALUFlags** that are used to judge whether the flags meet the conditions and the instructions will be executed. It's only used in `CondLogic` module and need no ports as outputs.
-
-   However, when considering implementing all the **16 Data Processing Instructions**, especially **ADC, SBC** and **RSC**, **C** is required in `ALU` module as a part of the arithematic.
-
-2. **Add three output signals  Carry_used, Reverse_B and Reverse_Src in Decoder module :** 
-
-   **Carry_used** is used in `ALU` module to judge whether the **C** signal generated from `CondLogic` module is needed. When the instrucion is one of **ADC,SBC** and **RSC**, **Carry_used** is pulled high.
-   **Reverse_B** is also used in `ALU` module to judge if **Src_B** needs to be reversed. **Src_B** is reversed only with the instruction of **BIC** and **MVN**.
-   **Reverse_Src** is used in `ARM` module to judge if **Src_A** and **Src_B** need to be exchanged. That is, shifter_operand is the input of **Src_A** while Rn is the input of **Src_B**. This situation appears when either **RSB** or **RSC** is executed.
-
-3. **Extend the bitwidth of signal ALUControl from 2 bits to 3 bits:**
-   The original bitwidth of the signal **ALUControl** is 2 bits, which is used as the four conditions of executing And, Or, Add and Sub in `ALU` module respectively.
-   Nevertheless, to implement all **Data Processing Instructions**, other arithmetic such as **EOR** and **MOV** should be considered. **EOR** itself is an arithmetic. **MOV** and **MVN** needs the origin and inverse codes of **Src_B** instead of origin and complement of **Src_B** like **SUB** does. Thus, two more conditions of **ALUControl** are required, leading to the extension of bitwidth.
-   To satisfy the assignment of all the instructions, the amount of the cases of {ALUOp[1:0],Funct[4:0]} increase to 2+12*2+4 = 30.
-   The bitwidth of **ALUControl** needs to be changed in `Decoder`, `ALU` and `ARM` three modules.
-
-4. **Change the computation of ALUResult in ALU module:**
-   As mentioned above, the bitwidth of **ALUControl** is extended, leading to two more conditions and changes in the original ways of computing **ALUResult**.
-   To implement **ADC, SBC** and **RSC**, **C** signal needs to be considered in the original Add and Sub. Two new signals **Carry_trans** and **Carry_fixed** are used to tell whether **C** signal is used and the way it will be used. Another new signal **Src_B_fixed** is used to tell whether **Src_B** needs to be inversed with the signal **Reverse_B** mentioned above.
-   With these changes, the computing of **ALUResult** are divided into the sum of **Src_A,  Src_B** and **Carry_fixed**, the sum of **Src_A**, complement of **Src_B** and complement of **Carry_fixed**, **Src_A** AND **Src_B_fixed**, **Src_A** ORR **Src_B**, **Src_A** EOR **Src_B**, and assigning to **Src_B_fixed** six kinds.
-
-5. **Changes in ARM module:**
-   New signals **C**, **Carry_usedD**, **Reverse_BD**, **Reverse_SrcD** as wires and **Carry_usedE**, **Reverse_BE**, **Reverse_SrcE** as regs are introduced in `ARM` module to satisfy the changes in other modules. Besides, the bitwidth of **ALUControlD** and **ALUControlE** increase from 2 to 3 as mentioned above.
+**TODO: Runsen Zhang, Guanqi Peng**
 
 #### Test & Simulation:
 
-1. Test for **AND, ORR, EOR** and **MOV**
-
-   - The assembly instructions are as below:
-
-   ```assembly
-    LDR R1, constant1; R1=5
-    LDR R2, constant2; R2=6
-    LDR R3, addr1; 810
-    LDR R4, addr2; 820
-    LDR R12,addr3; 0xffffffff
-    
-    AND R5, R1, #1;   R5=1
-    AND R6, R2, R3;   R6=0
-    EOR R7, R1, R2;   R7=3
-    EOR R8, R1, R1;   R8=0
-    ORR R9, R1, R2;   R9=7
-    MOV R5, #0;       R5=0
-    ORR R6, R1, R1;   R6=5
-   
-    addr1
-        DCD 0x00000810;
-    addr2 	
-        DCD 0x00000820;
-    addr3
-        DCD 0xffffffff;
-    constant1
-        DCD 0x00000005; 
-    constant2
-        DCD 0x00000006;
-    constant3 
-        DCD 0x00000003;
-   ```
-
-   - The simulation waveform is 
-
-     ![DP_Fig1](./Simulation_Waveform_Figure/DP16/DP_Fig1.png)
-
-     At 110ns, the output of the first AND instruction is shown in R5. At 170ns, the output of the final ORR instruction is shown in R6. Within this period of time, the outputs of the instructions can be seen, which is all correct.
-
-2. Test for **CMN, TST, TEQ, RSB, ADC, CMP, RSC** and **SBC**.
-
-   - The assembly instructions are as below:
-
-     ```assembly
-      LDR R1, constant1; R1=5
-      LDR R2, constant2; R2=6
-      LDR R3, addr1; 810
-      LDR R4, addr2; 820
-      LDR R12,addr3; 0xffffffff
-      
-      AND R5, R1, #1;   R5=1
-      AND R6, R2, R3;   R6=0
-      EOR R7, R1, R2;   R7=3
-      EOR R8, R1, R1;   R8=0
-      ORR R9, R1, R2;   R9=7
-      MOV R5, #0;       R5=0
-      ORR R6, R1, R1;   R6=5
-
-      CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
-      TST R1, #0;       R1=5 N=0 Z=1
-      TEQ R1, #0;       R1=5 N=0 Z=0	
-      RSB R7, R7, #7;   R7=4
-      ADC R8, R8, #1;   R8=2
-      CMP R1, #6;       R1=5 N=1 Z=0 C=0 V=0
-      RSC R9, R9, #9;   R9=1
-      SBC R5, R1, #2;   R5=2
-    
-      addr1
-          DCD 0x00000810;
-      addr2 	
-          DCD 0x00000820;
-      addr3
-          DCD 0xffffffff;
-      constant1
-          DCD 0x00000005; 
-      constant2
-          DCD 0x00000006;
-      constant3 
-          DCD 0x00000003;
-     ```
-
-   - The simulation waveform is
-
-     ![DP_Fig2](./Simulation_Waveform_Figure/DP16/DP_Fig2.png)
-     
-     At 165ns, **C**, one of the ALUFlags is pulled up to 1 since **CMN** instruction has come into exection stage. At 175ns, **TST** has come into execution stage and changes the **Z** flag to 1. At 185ns, **TEQ** has come into execution stage and the **Z** flag is pulled down to 0. **TST** and **TEQ** do not change **C** flag and **V** flag, which makes the **C** flag from 165ns to 215ns maintaining to be 1 until **CMP** instruction has come into exectuion stage at 215ns. At 210ns, the output of **RSC** instruction is shown in R7, which is shifter_operand 7 minus the original value of R7 3 equals 4, which is correct in the waveform. Since **C** flag is 1, the Carry signal of the **ADC** instruction is pulled up, resulting in the value of R8 being 0+1+1=2 shown in the waveform at 220ns. **CMP** comes into exection stage at 215ns and changes **C** and **N** flags as mentioned above. Since **C** becomes 0 at 215ns, the NOT Carry signals of **RSC** and **SBC** are pulled up, resulting in the value of R9 being 9-7-1=1 and R5 beign 5-2-1=2 shown in the waveform at 240ns and 250ns.
-
-3. Test for **MVN** and **BIC**.
-
-   - The assembly instructions are as below:
-
-     ```assembly
-      LDR R1, constant1; R1=5
-      LDR R2, constant2; R2=6
-      LDR R3, addr1; 810
-      LDR R4, addr2; 820
-      LDR R12,addr3; 0xffffffff
-      
-      AND R5, R1, #1;   R5=1
-      AND R6, R2, R3;   R6=0
-      EOR R7, R1, R2;   R7=3
-      EOR R8, R1, R1;   R8=0
-      ORR R9, R1, R2;   R9=7
-      MOV R5, #0;       R5=0
-      ORR R6, R1, R1;   R6=5
-
-      CMN R2, R12;      R2=6 N=0 Z=0 C=1 V=0
-      TST R1, #0;       R1=5 N=0 Z=1
-      TEQ R1, #0;       R1=5 N=0 Z=0	
-      RSB R7, R7, #7;   R7=4
-      ADC R8, R8, #1;   R8=2
-      CMP R1, #6;       R1=5 N=1 Z=0 C=0 V=0
-      RSC R9, R9, #9;   R9=1
-      SBC R5, R1, #2;   R5=2
-      MVN R6, #0;       R6=0xffffffff
-	  BIC R7, R1, #4;   R7=1
-    
-      addr1
-          DCD 0x00000810;
-      addr2 	
-          DCD 0x00000820;
-      addr3
-          DCD 0xffffffff;
-      constant1
-          DCD 0x00000005; 
-      constant2
-          DCD 0x00000006;
-      constant3 
-          DCD 0x00000003;
-     ```
-
-   - The simulation waveform is
-
-     ![DP_Fig3](./Simulation_Waveform_Figure/DP16/DP_Fig3.png)
-     
-     At 260ns, the output of **MVN** instruction is shown in R6. At 270ns, the output of **BIC** instruction is shown in R7. These two waveforms are all correct.
-
-     All in all, all the **16 DP Instructions** can be executed correctly.
+Create your testbench and assembly code to verify these functions in the **simulation waveform**.
 
 ### 4. A 4-way set associative cache between memory and ARM CPU. 
 
@@ -615,19 +395,7 @@ MUL R6, R3, R4;
 MUL R7, R1, R3;
 	
 DIV R8, R4, R3;
-
-addr1
-		DCD 0x00000810;
-addr2 	
-		DCD 0x00000820;
-addr3
-		DCD 0x00000830;
-constant1
-		DCD 0x00000005; 
-constant2
-		DCD 0x00000006;
-constant3 
-		DCD 0x00000003;			
+	
 constant4 
 		DCD 0x42400000;48.0
 constant5 
@@ -636,14 +404,11 @@ constant6
 		DCD 0x3FA66666;1.3
 constant7
 		DCD 0x40266666;2.6		
-number0
-		DCD 0x00000000;
-
 ```
 
 The simulation waveform is
 
-![image-20240118005755832](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240118005755832.png)
+![image-20240118005755832](./Simulation_Waveform_Figure/FloatPoint/WithoutSpecial.png)
 
 The first three "MUL" instructions are Single Float Addition. The last "DIV" instruction is Single Float Multiplication. The result of the waveform is consistent with the  Calculation results.
 
@@ -682,7 +447,7 @@ constant8
 
 The simulation waveform is
 
-![image-20240118113230336](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240118113230336.png)
+![image-20240118113230336](./Simulation_Waveform_Figure/FloatPoint/WithSpecial.png)
 
 From the waveform we can see that the processor deal with special cases according to the Arm manual.
 
@@ -702,7 +467,70 @@ Additionally, you can try to find the differences between ARM and RISC-V hardwar
 
 #### Test & Simulation:
 
-Test your design by writing an assembly program yourself, which should contain all kinds of these instructions. 
+The assembly instructions are as below:
+
+```assembly
+LDR R0, constant1;
+LDR R1, constant2;
+
+ADD R2, R1, R0;
+SUB R3, R2, R1;
+SLT R4, R1, R2;
+SLTU R5, R2, R1;
+ADDI R6, R0, #11;
+SLTI R7, R6, #19;
+SLTIU R8, R6, #15;
+LB R9, R4, #511;
+ADDI R12, R10, #4;
+LW R13, R12, #511;
+LBU R14, R12, #511;
+LHU R15, R12, #511;
+SB R4, R15, #2047;
+SH R13, R10, #2047;
+SW R13, R12, #2047;
+
+ADDI R16, R0, #-4;
+ADDI R16, R16, #1;
+BNE R0, R16, #-4;
+
+ADDI R17, R0, -4;
+BEQ R0, R17, #12;
+ADDI R17, R17, #1;
+BEQ R0, R0, #-8;
+
+ADDI R18, R0, #0;
+BLTU R18, R0, #12;
+ADDI R18, R18, #-1;
+BEQ R0, R0, #-8;
+
+ADDI R19, R0, #-1;
+BGEU R19, R0, #12;
+ADDI R19, R19, #1;
+BEQ R0, R0, #-8;
+
+LW R20, R4, #2047;
+BGE R20, R4, #12;
+ADDI R20. R20, #1;
+BEQ R0, R0, #-8;
+
+LW R21, R4, #2047;
+BLT R4, R21, #12;
+ADDI R21, R21, #1;
+BEQ R0, R0, #-8;
+
+JAL R22 #4;
+SW R22, R12, #2047;
+JAL R23 #0;
+
+constant1 
+		DCD 0x00000004;
+constant2 
+		DCD 0x00000008;
+```
+
+The simulation waveform is
+
+![image-20240119145230092](./Simulation_Waveform_Figure/RISC-V/Result.png)
 
 ### 8. Advanced Processor (Bonus)
 
