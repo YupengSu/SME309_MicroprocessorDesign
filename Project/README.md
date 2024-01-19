@@ -84,7 +84,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240116112711171](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240116112711171.png)
+     ![image-20240116112711171](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116112711171.png)
 
      From the change of ForwardAE and ForwardBE, we can see that DataForwarding of DP is valid.
 
@@ -108,7 +108,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     <img src="C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117193740548.png" alt="image-20240117193740548" style="zoom:67%;" />
+     ![image-20240117193740548](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117193740548.png)
      
      When memory-memory copy happens, ForwardM should be 1, which is consistent with the waveform. Therefore,  the code implementation is valid.
 
@@ -150,7 +150,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240116120722907](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240116120722907.png)
+     ![image-20240116120722907](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116120722907.png)
 
      When Load and Use happens, Idrstall = StallF = StallD = 1. And from the waveform, we can see there is one more cycle between LDR instruction and SUB instruction.
 
@@ -192,7 +192,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is 
 
-     ![image-20240116115351079](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240116115351079.png)
+     ![image-20240116115351079](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240116115351079.png)
 
      When EarlyBTA happens, PCSrc = FlushD = FlushE = 1. And from the waveform, we can see the branch instruction really happens in advance.
 
@@ -233,7 +233,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
 
    - The simulation waveform is
 
-     ![image-20240117164238833](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117164238833.png)
+     ![image-20240117164238833](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117164238833.png)
      
      According to the assemble instructions, the final result of SEVENSEG is 57 in  hexadecimal, which is consistent with the waveform.
 
@@ -345,7 +345,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    - The simulation waveform is
 
-     ![image-20240117153940296](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117153940296.png)
+     ![image-20240117153940296](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117153940296.png)
      
      Since there is not RAW, there is no stalling. The final result in R5 is 1e in hexadecimal, just like what the waveform shows.
 
@@ -378,7 +378,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
    - The simulation waveform is
 
-     ![image-20240117160547165](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240117160547165.png)
+     ![image-20240117160547165](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240117160547165.png)
      
      Since there exists RAW, there is stall. When stalling happens, FlushE = StallD = StallF = 1, which is consistent with the waveform. Therefore, the stalling situation is achieved successfully.
 
@@ -478,9 +478,9 @@ number0
 
 ```
 
-​	The simulation waveform is
+The simulation waveform is
 
-![image-20240118005755832](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240118005755832.png)
+![image-20240118005755832](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240118005755832.png)
 
 The first three "MUL" instructions are Single Float Addition. The last "DIV" instruction is Single Float Multiplication. The result of the waveform is consistent with the  Calculation results.
 
@@ -519,7 +519,7 @@ constant8
 
 The simulation waveform is
 
-![image-20240118113230336](C:\Users\86131\AppData\Roaming\Typora\typora-user-images\image-20240118113230336.png)
+![image-20240118113230336](C:\Users\86131\Documents\GitHub\SME309_MicroprocessorDesign\Project\assets\image-20240118113230336.png)
 
 From the waveform we can see that the processor deal with special cases according to the Arm manual.
 
