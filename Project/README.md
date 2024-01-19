@@ -8,7 +8,7 @@
 >
 > There is no fixed structure for the report. However, to distinguish the understanding level of each group, you should try to show your critical thinking in hardware design and details of each task clearly in your report. By the way, your report should be well-formatted. Division of labor and contribution percentage for each group member should be included at the end of the report. 
 >
->  **Submitted Files:** 
+> **Submitted Files:** 
 >
 > 1. Report pdf (including waveform screenshot for each task, on-board result);
 > 2. Source code ZIP (including RTL files, assembly code files, test instructions, and so on);
@@ -17,6 +17,8 @@
 > 5. other files…
 >
 >  **DDL:** 2024/01/19 23:55 PM
+>
+> **Contribution:**  Equally Divide!
 
 ### 1. Implement a five-stage pipeline processor with Hazard Unit. 
 
@@ -185,7 +187,7 @@ In this project, you will implement a five-stage pipeline processor that Prof. L
    - The on-board test figure is
 
      ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test2.jpg) 
-     
+   
 5. Test for multiple DP instructions
 
    - The assembly instructions are as below:
@@ -279,8 +281,6 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
 
        $$ \text{StallF = StallD = StallE = MDone} $$
 
-     
-
    * When **data dependency** :
 
      ![image-20240115004157030](./Design_Architecture_Figure/image-20240115004157030.png)
@@ -288,7 +288,7 @@ The data dependency between instr2 and instr1 appears, since the CPU need the re
      * Case1: Read After Write (R symbols the saved registers in MCycleReg)
        
        $$ \text{RMatch\_12D\_R = (RA1D == WA3R) || (RA2D == WA3R)} $$
-
+   
      * Case2: Write After Write
        
        $$ \text{WMatch\_3D\_R = (WA3D == WA3R)} $$
@@ -481,8 +481,6 @@ You will expand the ARM processor to support **all 16 Data Processing Instructio
 
 #### Requirement: 
 
-![image-20231208132513229](./Design_Architecture_Figure/image-20231208132513229.png)
-
 The schematic of a **4-way set associative cache** is shown above. The cache size is **4KB** (256 rows\*4 ways\*4 bytes). The cache uses **write-allocate** and **write-back** scheme. Inserting this cache will further add complexity to the Store and Load instructions. There are 4 situations when accessing the cache:
 
 1. When **read hit**, directly load data from cache to register.
@@ -494,7 +492,36 @@ The schematic of a **4-way set associative cache** is shown above. The cache siz
 
 **TODO: Yupeng Su** 
 
-![image-20240119172648872](/Users/suyupeng/Documents/GitHub/SME309_MicroprocessorDesign/Project/assets/image-20240119172648872.png)
+![image-20240119172648872](./Design_Architecture_Figure/image-20240119172648872.png)
+
+1. Use a 6 state machine:
+
+   * `IDLE` : Default state, waiting signal Start.
+
+   * `READ_CACHE` : Read data from cache to CPU, waiting signal ReadReady.
+
+   * `WRITE_CACHE` : Write data from CPU to cache, **add dirty symbol**, waiting signal WriteReady.
+
+   * `WRITE_BACK` : Write data from cache to memory **when block is dirty**, waiting signal MemWriteFinish.
+
+   * `READ_MEM` : Read data from memory to cache, waiting signal MemReadFinish.
+
+   * `WRITE_ALLOCATE` : Allocate data in cache, change the cache data.
+
+2. Four condition can be divide to different state:
+
+   * Read Hit: `IDLE` -> `READ_CACHE` -> `IDLE`.
+   * Read Miss: `IDLE` -> `WRITE_BACK`(optional) -> `READ_MEM` -> `WRITE_ALLOCATE` ->  `READ_CACHE` -> `IDLE`.
+   * Write Hit: `IDLE` -> `WRITE_CACHE` -> `IDLE`.
+   * Write Miss: `IDLE` -> `WRITE_BACK`(optional) -> `READ_MEM` -> `WRITE_ALLOCATE` ->  `WRITE_CACHE` -> `IDLE`.
+
+3. Use FIFO standard to arrange associative cache.
+
+   * Use  `recent` bits for each set, save the block next to the current changed block.
+
+4. Use **Combinational Logic** to Find **Hit** and **Data**, and **Sequential logic** for FSM: 
+
+   ![image-20231208132513229](./assets/image-20231208132513229.png)
 
 #### Test & Simulation:
 
@@ -529,6 +556,10 @@ FPU is a 8-state state machine. According to the caculations of floating point n
 |FMUL_NORMAL|Check and deal with overflow. |IDLE|
 
 #### Test & Simulation:
+
+**IMPORTANT**: You should remove the FPUnit comment, and comment out MCycle in ARM.v.
+
+![image-20240119224351127](./Design_Architecture_Figure/image-20240119224351127.png)
 
 The assembly instructions are as below:	
 
@@ -593,7 +624,7 @@ constant8
 		DCD 0xFFFFFFFF;NaN
 ```
 
-The simulation waveform is
+   - The simulation waveform is
 
 ![image-20240118113230336](./Simulation_Waveform_Figure/FloatPoint/WithSpecial.png)
 
@@ -603,6 +634,10 @@ Dealing with NaN:
 
 1. If one of the number is NaN, the result will be the NaN number.
 2. If both the numbers are NaN, there are two conditions. The first one is that one of the number is QNaN and the other is SNaN, then the result will be the QNaN transformed from the SNaN number. The second one is that both numbers are SNaN, then the result will be the QNaN transformed from the first SNaN. 
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test9.jpg) 
 
 ### 7. RISC-V ISA 
 
@@ -622,7 +657,7 @@ The whole sturucture of RISC-V we designed is as follows.
 
 ##### Details of each module
 
-###### ControlUnit
+**ControlUnit**
 
 The ControlUnit has 11 output control signals in total to control the action of each module and the data flows.
 
@@ -639,23 +674,23 @@ The ControlUnit has 11 output control signals in total to control the action of 
 |MemWrite|To control the write action in RF: write a byte, a half word or a word.|2-bit|
 |MemtoReg|To select the source of result.|1-bit|
 
-###### ProgramCounter
+**ProgramCounter**
 
 If PCSrc is 1, the next PC will be next_PC, or the next PC is PC_Plus_4. The next_PC can be either PC+imm or rs1+imm. PC jumps to next_PC only if the PCSrc_out and the output of Comparator are both 1, which is specially designed for jal and jalr instructions.
 
-###### RegisterFile
+**RegisterFile**
 
 Only the write instructions in this RISC-V architecture are differnent from these of ARM. WE3 indicates the types of writing: 0b00 for no write, 0b01 for byte write, 0b10 for half-word write and 0b11 for word write. The same design is also in memory writing. The signal sign_for_reg indicates the extension type of writing when RF is not writing a complete word: 1 for msb_extend and 0 for zreo extend.
 
-###### Extend
+**Extend**
 
 In the required insyructions set, there are 4 type of instructions having immediate number. Except for I-type instructions, the extensions are all msb-extend. ImmSrc indicates the type of instruction. The signal sign indiactes the type of extension. Only when the core is excuating sltu and sltis instructions, the module excuates zero extension.
 
-###### ALU
+**ALU**
 
 ALU takes the jobs of add, sub in all instructions and the comparsions in I-type instructions.
 
-###### Comparator
+**Comparator**
 
 Comparator takes jobs of comparsions in the B-type instruction to check whether the conditions meet the requirement in brench instructions. According the current instruction, if the brench should be taken, the output of the module will be 1.
 
@@ -722,9 +757,13 @@ constant2
 		DCD 0x00000008;
 ```
 
-The simulation waveform is
+   - The simulation waveform is
 
 ![image-20240119145230092](./Simulation_Waveform_Figure/RISC-V/Result.png)
+
+   - The on-board test figure is
+
+     ![image-20240116112711171](./On_Board_Test_Figure_and_Video/on_board_test8.jpg) 
 
 ### 8. Advanced Processor (Bonus)
 
