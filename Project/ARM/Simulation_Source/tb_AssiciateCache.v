@@ -12,8 +12,14 @@ module tb_AssociativeCache;
     wire ReadReady;
     reg MemReadFinish;
     reg MemWriteFinish;
+    wire MemReadStart;         
+    wire MemWriteStart;          
+    wire [31:0] MemReadAddr;    
+    reg [31:0] MemReadData;      
+    wire [31:0] MemWriteAddr;
+    wire [31:0] MemWriteData;
 
-    // 实例化模块
+    // 实例化模�?
     AssociativeCache4Way UUT (
         .CLK(CLK),
         .Reset(Reset),
@@ -25,8 +31,40 @@ module tb_AssociativeCache;
         .WriteReady(WriteReady),
         .ReadReady(ReadReady),
         .MemReadFinish(MemReadFinish),
-        .MemWriteFinish(MemWriteFinish)
+        .MemWriteFinish(MemWriteFinish),
+        .MemReadStart(MemReadStart),
+        .MemWriteStart(MemWriteStart),
+        .MemReadAddr(MemReadAddr),
+        .MemReadData(MemReadData),
+        .MemWriteAddr(MemWriteAddr),
+        .MemWriteData(MemWriteData)
     );
+
+    reg [31:0] DataMem [0:1024];
+    integer i;
+
+    initial begin
+        for(i = 0; i < 1024; i = i+1) begin
+            if (i % 256 == 0)
+                DataMem[i] = 1;
+            else
+                DataMem[i] = 0;
+        end
+    end
+
+    always @(*) begin
+        MemReadFinish = MemReadStart;
+        MemWriteFinish = MemWriteStart;
+    end
+
+    always @(*) begin
+        if (MemReadStart) begin
+            MemReadData = DataMem[MemReadAddr[11:2]];
+        end
+        else if (MemWriteStart) begin
+            DataMem[MemWriteAddr[11:2]] = MemWriteData;
+        end
+    end
 
     // 时钟生成
     always begin
@@ -35,7 +73,7 @@ module tb_AssociativeCache;
 
     // 测试序列
     initial begin
-        // 初始化
+        // 初始�?
         CLK = 0;
         Reset = 1;
         Start = 0;
@@ -48,27 +86,22 @@ module tb_AssociativeCache;
         #10;
         Reset = 0;
 
-        // 测试读取
+        // 测试读取(Write Miss)
         Start = 1;
         RWAddr = 32'h00000000;
         #10;
         Start = 0;
-
-        // 测试写入
+        #100;
         Start = 1;
-        WriteEnable = 1;
-        RWAddr = 32'h00000004;
-        WriteData = 32'h12345678;
+        RWAddr = 32'h00008000;
         #10;
         Start = 0;
-        WriteEnable = 0;
-
-        // 测试读取写入的数据
+        #100;
         Start = 1;
-        RWAddr = 32'h00000004;
+        RWAddr = 32'h00010000;
         #10;
         Start = 0;
-
+        #100;
         // 结束测试
         $finish;
     end

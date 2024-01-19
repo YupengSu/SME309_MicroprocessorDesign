@@ -4,7 +4,7 @@ module AssociativeCache4Way # (
     parameter ROW_WIDTH = 8,
     parameter TAG_WIDTH = 22,
     parameter ROW = 256,
-    parameter FLAG_RST = 256'b0,
+    parameter FLAG_RST = 256'b0
 ) (
     input CLK,
     input Reset,
@@ -44,15 +44,17 @@ module AssociativeCache4Way # (
     reg [1:0] Recents [0:ROW-1]; // ensure FIFO replacement
 
     /* Combinational logic: Find Hit and Data */
-    wire Hits [0:WAY_NUM-1];
+    wire[0:WAY_NUM-1] Hits;
+    reg [1:0] Idx;
     wire Hit;
     wire [31:0] Data;
-    reg [1:0] Idx;
-
-    integer i = 0;
-    for (i = 0; i < WAY_NUM; i = i + 1) begin
-        assign Hit[i] = Valids[i][RWAddr[9:2]] & (RWAddr[31:10] == Tags[i][RWAddr[9:2]]);
-    end
+    
+    genvar i;
+    generate
+        for (i = 0; i < WAY_NUM; i = i + 1) begin : HIT_ASSIGN
+            assign Hits[i] = Valids[i][RWAddr[9:2]] & (RWAddr[31:10] == Tags[i][RWAddr[9:2]]);
+        end
+    endgenerate
 
     assign Hit = Hits[0] | Hits[1] | Hits[2] | Hits[3];
     assign Data = Datas[Idx][RWAddr[9:2]];
@@ -68,8 +70,8 @@ module AssociativeCache4Way # (
     end
 
     /* Sequential logic: Update Valid, Tag, and Data */
-    always @(posedge CLK or posedge RESET) begin
-        if (RESET)
+    always @(posedge CLK or posedge Reset) begin
+        if (Reset)
             state <= IDLE;
         else
             state <= n_state;
@@ -207,7 +209,7 @@ module AssociativeCache4Way # (
                     Datas[Recents[RWAddr[9:2]]][RWAddr[9:2]] <= MemReadData;
                     Tags[Recents[RWAddr[9:2]]][RWAddr[9:2]] <= RWAddr[31:10];
                     Valids[Recents[RWAddr[9:2]]][RWAddr[9:2]] <= 1'b1;
-                    Recents[RWAddr[9:2]] += 1'b1;
+                    Recents[RWAddr[9:2]] <= Recents[RWAddr[9:2]] + 1'b1;
                 end
                 default: begin
                     WriteReady <= 1'b0;
@@ -220,6 +222,5 @@ module AssociativeCache4Way # (
         end
             
     end
-
 
 endmodule
